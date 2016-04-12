@@ -1,7 +1,10 @@
 package model;
 
 
+import com.badlogic.gdx.graphics.Texture;
+
 import java.awt.*;
+import java.awt.geom.Point2D;
 
 /**
  * Created by Dawid on 2016-04-12.
@@ -9,9 +12,11 @@ import java.awt.*;
 public class Czolg {
     private int zycia;
     private Point polozenie;
+    private Point polozenieNaPlanszy;
     private int idGracza;
     private Kierunek kierunek;
     private boolean czyWRuchu;
+    private Texture tekstura;
 
     public Czolg(int idGracza,int iloscZyc, Point polozeniePoczatkowe){
         this.idGracza=idGracza;
@@ -19,6 +24,8 @@ public class Czolg {
         this.polozenie=polozeniePoczatkowe;
         this.czyWRuchu=false;
         this.kierunek=null;
+        this.tekstura = null;
+        this.polozenieNaPlanszy = polozeniePoczatkowe;
     }
     public int getZycia() {
         return zycia;
@@ -40,8 +47,8 @@ public class Czolg {
         return polozenie;
     }
 
-    public void setPolozenie(Point polozenie) {
-        this.polozenie = polozenie;
+    public void setPolozenie(double x, double y) {
+        polozenie.setLocation(x,y);
     }
 
     public boolean isCzyWRuchu() {
@@ -69,7 +76,19 @@ public class Czolg {
     }
 
 
+    public Texture getTekstura() {
+        return tekstura;
+    }
 
+    public void setTekstura(Texture tekstura) {
+        this.tekstura = tekstura;
+    }
 
+    public Point getPolozenieNaPlanszy() {
+        return polozenieNaPlanszy;
+    }
 
+    public void setPolozenieNaPlanszy(Point polozenieNaPlanszy) {
+        this.polozenieNaPlanszy = polozenieNaPlanszy;
+    }
 }

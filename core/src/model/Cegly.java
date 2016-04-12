@@ -1,10 +1,13 @@
 package model;
 
-/**
- * Created by Dawid on 2016-04-12.
- */
+
+import java.awt.*;
+
 public class Cegly extends Blok {
-    public Cegly(){
-    /// test
+    public Cegly(int x, int y){
+        setPolozenie(x,y);
+        setWytrzymalosc(2);
+        symbol = 'C';
     }
+
 }

@@ -2,40 +2,56 @@ package com.mygdx.tanks;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import model.Blok;
+import model.Czolg;
+import model.Kierunek;
+import model.Plansza;
+
+import java.awt.*;
+import java.awt.geom.Point2D;
+import java.io.File;
+import java.util.Random;
 
 public class TanksGame extends ApplicationAdapter {
 	SpriteBatch batch;
-	Texture czolg_ziel,czolg_czer, czolg_nieb, czolg_pom;
-	Texture blok,  krzak, mur;
+	Texture czolg_ziel,czolg_czer_L, czolg_nieb, czolg_pom;
+    Texture czolg_czer_P, czolg_czer_G, czolg_czer_D;
+	Texture  zarosla, cegly, kamien;
+    Czolg czolg = new Czolg(1,5,new Point(10,10));
+    Plansza plansza;
 	
 	@Override
 	public void create () {
+        plansza = new Plansza("plansza.txt");
 		batch = new SpriteBatch();
-		blok = new Texture("blok.png");
-		czolg_czer = new Texture("czolg_czer.png");
+		kamien= new Texture("kamien.png");
+		czolg_czer_L = new Texture("czolg_czerL.png");
+        czolg_czer_P = new Texture("czolg_czerP.png");
+        czolg_czer_G = new Texture("czolg_czerG.png");
+        czolg_czer_D = new Texture("czolg_czerD.png");
 		czolg_nieb = new Texture("czolg_nieb.png");
 		czolg_pom = new Texture("czolg_pom.png");
 		czolg_ziel = new Texture("czolg_ziel.png");
-		krzak = new Texture("krzak.png");
-		mur = new Texture("mur.png");
+		zarosla = new Texture("zarosla.png");
+		cegly = new Texture("mur.png");
+        czolg.setKierunek(Kierunek.LEWO);
+        czolg.setTekstura(czolg_czer_L);
+        czolg.setPolozenieNaPlanszy(new Point(10*25, 800-10*25));
 	}
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		batch.draw(blok, 0, 0);
-		batch.draw(czolg_czer, 25,0);
-		batch.draw(czolg_nieb, 50,0);
-		batch.draw(czolg_pom, 75,0);
-		batch.draw(czolg_ziel, 100, 0);
-		batch.draw(krzak, 125, 0);
-		batch.draw(mur, 150, 0);
-		batch.end();
+        update();
+        Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        batch.begin();
+        drawBoard();
+        batch.draw(czolg.getTekstura(), czolg.getPolozenieNaPlanszy().x, czolg.getPolozenieNaPlanszy().y);
+        batch.end();
 	}
 
 	@Override
@@ -53,17 +69,62 @@ public class TanksGame extends ApplicationAdapter {
 		super.resume();
 	}
 
+    public void drawBoard(){
+        for (Blok obiekt:plansza.listaObiektow){
+            switch (obiekt.symbol){
+                case 'C':{
+                    batch.draw(cegly, 25*obiekt.getPolozenie().x, 800-25*obiekt.getPolozenie().y);
+                    break;
+                }
+                case 'K':{
+                    batch.draw(kamien, 25*obiekt.getPolozenie().x, 800-25*obiekt.getPolozenie().y);
+                    break;
+                }
+                case 'Z':{
+                    batch.draw(zarosla, 25*obiekt.getPolozenie().x, 800-25*obiekt.getPolozenie().y);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void update(){
+        int x = czolg.getPolozenieNaPlanszy().x;
+        int y = czolg.getPolozenieNaPlanszy().y;
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+                x--;
+                czolg.setKierunek(Kierunek.LEWO);
+                czolg.setTekstura(czolg_czer_L);
+            }
+            else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+                x++;
+                czolg.setKierunek(Kierunek.PRAWO);
+                czolg.setTekstura(czolg_czer_P);
+            }
+            else if (Gdx.input.isKeyPressed(Input.Keys.UP)){
+                y++;
+                czolg.setKierunek(Kierunek.GORA);
+                czolg.setTekstura(czolg_czer_G);
+            }
+            else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+                y--;
+                czolg.setKierunek(Kierunek.DOL);
+                czolg.setTekstura(czolg_czer_D);
+            }
+
+        czolg.setPolozenieNaPlanszy(new Point(x,y));
+    }
+
 	@Override
 	public void dispose() {
 		batch.dispose();
-		blok.dispose();
-		czolg_czer.dispose();
+		kamien.dispose();
+		czolg_czer_L.dispose();
 		czolg_nieb.dispose();
 		czolg_pom.dispose();
 		czolg_ziel.dispose();
-		krzak.dispose();
-		mur.dispose();
-
+		zarosla.dispose();
+		cegly.dispose();
 
 	}
 

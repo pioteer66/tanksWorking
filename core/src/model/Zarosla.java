@@ -1,8 +1,12 @@
 package model;
 
-/**
- * Created by Dawid on 2016-04-12.
- */
-public class Zarosla extends Blok{
 
+import java.awt.*;
+
+public class Zarosla extends Blok{
+    public Zarosla(int x, int y){
+        setPolozenie(x,y);
+        setWytrzymalosc(3);
+        symbol = 'Z';
+    }
 }
