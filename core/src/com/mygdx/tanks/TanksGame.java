@@ -42,7 +42,7 @@ public class TanksGame extends ApplicationAdapter {
         batch.begin();
         double x = czolg.getX();
         double y = czolg.getY();
-        batch.draw(new TextureRegion(czolg_czer), (float)x, Stale.SZEROKOSC-(float)y,
+        batch.draw(new TextureRegion(czolg_czer), (float)x, (float)y,
                 (float)czolg.getCenterX()-(float)x, (float)czolg.getCenterY()-(float)y,
                 (float)czolg.getWidth(), (float)czolg.getHeight(), 1f, 1f, (float)czolg.getKierunek().getValue()*90);
         drawBoard();
@@ -68,15 +68,15 @@ public class TanksGame extends ApplicationAdapter {
         for (Blok obiekt:plansza.listaObiektow){
             switch (obiekt.getSymbol()){
                 case 'C':{
-                    batch.draw(cegly, (int)obiekt.getX(), Stale.WYSOKOSC-(int)obiekt.getY());
+                    batch.draw(cegly, (int)obiekt.getX(), (int)obiekt.getY());
                     break;
                 }
                 case 'K':{
-                    batch.draw(kamien, (int)obiekt.getX(), Stale.WYSOKOSC-(int)obiekt.getY());
+                    batch.draw(kamien, (int)obiekt.getX(), (int)obiekt.getY());
                     break;
                 }
                 case 'Z':{
-                    batch.draw(zarosla, (int)obiekt.getX(), Stale.WYSOKOSC-(int)obiekt.getY());
+                    batch.draw(zarosla, (int)obiekt.getX(), (int)obiekt.getY());
                     break;
                 }
             }
@@ -86,32 +86,40 @@ public class TanksGame extends ApplicationAdapter {
     public void update(){
         int x = (int)czolg.getX();
         int y = (int)czolg.getY();
+        Kierunek k = czolg.getKierunek();
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT)){
-                czolg.x--;
+                czolg.x-=Stale.PREDKOSC_CZOLGU ;
                 czolg.setKierunek(Kierunek.LEWO);
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
-                czolg.x++;
+                czolg.x+=Stale.PREDKOSC_CZOLGU;
                 czolg.setKierunek(Kierunek.PRAWO);
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.UP)){
-                czolg.y--;
+                czolg.y+=Stale.PREDKOSC_CZOLGU;
                 czolg.setKierunek(Kierunek.GORA);
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-                czolg.y++;
+                czolg.y-=Stale.PREDKOSC_CZOLGU;
                 czolg.setKierunek(Kierunek.DOL);
             }
-        boolean jest_kolizja = false;
-        for (Blok obiekt:plansza.listaObiektow){
-            if (obiekt.intersects(czolg) && obiekt.getSymbol() != 'Z') {
-                jest_kolizja = true;
-                break;
-            }
-        }
-        if (jest_kolizja) {
+        if (czolg.getX() >= Stale.SZEROKOSC-50 || czolg.getX() <=0 ||
+                czolg.getY() <= 0 || czolg.getY() >= Stale.WYSOKOSC-50){
             czolg.x = x;
             czolg.y = y;
+        }
+        else {
+            boolean jest_kolizja = false;
+            for (Blok obiekt : plansza.listaObiektow) {
+                if (obiekt.intersection(czolg).width >2 && obiekt.intersection(czolg).height >2 && obiekt.getSymbol() != 'Z') {
+                    jest_kolizja = true;
+                    break;
+                }
+            }
+            if (jest_kolizja) {
+                czolg.x = x;
+                czolg.y = y;
+            }
         }
     }
 
