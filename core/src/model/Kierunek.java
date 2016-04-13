@@ -5,7 +5,7 @@ package model;
  */
 public enum Kierunek {
     LEWO,
-    GORA,
+    DOL,
     PRAWO,
-    DOL
+    GORA
 }
