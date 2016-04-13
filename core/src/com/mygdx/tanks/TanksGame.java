@@ -15,8 +15,7 @@ import model.Plansza;
 
 public class TanksGame extends ApplicationAdapter {
 	SpriteBatch batch;
-	Texture czolg_ziel,czolg_czer_L, czolg_nieb, czolg_pom;
-    Texture czolg_czer_P, czolg_czer_G, czolg_czer_D;
+	Texture czolg_ziel,czolg_czer, czolg_nieb, czolg_pom;
 	Texture  zarosla, cegly, kamien;
     Czolg czolg = new Czolg(1,5, Stale.CZOLG_START_X*Stale.ROZMIAR_CZOLGU, Stale.CZOLG_START_Y*Stale.ROZMIAR_CZOLGU );
     Plansza plansza;
@@ -24,17 +23,14 @@ public class TanksGame extends ApplicationAdapter {
 	@Override
 	public void create () {
         plansza = new Plansza("plansza.txt");
-		batch = new SpriteBatch();
-		kamien= new Texture("kamien.png");
-		czolg_czer_L = new Texture("czolg_czerL.png");
-        czolg_czer_P = new Texture("czolg_czerP.png");
-        czolg_czer_G = new Texture("czolg_czerG.png");
-        czolg_czer_D = new Texture("czolg_czerD.png");
-		czolg_nieb = new Texture("czolg_nieb.png");
-		czolg_pom = new Texture("czolg_pom.png");
-		czolg_ziel = new Texture("czolg_ziel.png");
-		zarosla = new Texture("zarosla.png");
-		cegly = new Texture("mur.png");
+        batch = new SpriteBatch();
+        kamien= new Texture("niezniszczalny.png");
+        czolg_czer = new Texture("czerwonyCzolg.png");
+        czolg_nieb = new Texture("niebieskiCzolg.png");
+        czolg_pom = new Texture("zoltyCzolg.png");
+        czolg_ziel = new Texture("zielonyCzolg.png");
+        zarosla = new Texture("krzak.png");
+        cegly = new Texture("cegla.png");
         czolg.setKierunek(Kierunek.LEWO);
 	}
 
@@ -47,7 +43,7 @@ public class TanksGame extends ApplicationAdapter {
         drawBoard();
         double x = czolg.getX();
         double y = czolg.getY();
-        batch.draw(new TextureRegion(czolg_czer_L), (float)x, (float)y,
+        batch.draw(new TextureRegion(czolg_czer), (float)x, (float)y,
                 (float)czolg.getCenterX()-(float)x, (float)czolg.getCenterY()-(float)y,
                 (float)czolg.getWidth(), (float)czolg.getHeight(), 1f, 1f, (float)czolg.getKierunek().getValue()*90);
         batch.end();
@@ -112,7 +108,7 @@ public class TanksGame extends ApplicationAdapter {
 	public void dispose() {
 		batch.dispose();
 		kamien.dispose();
-		czolg_czer_L.dispose();
+		czolg_czer.dispose();
 		czolg_nieb.dispose();
 		czolg_pom.dispose();
 		czolg_ziel.dispose();
