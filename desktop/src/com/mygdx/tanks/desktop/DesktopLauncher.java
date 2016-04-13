@@ -11,7 +11,7 @@ public class DesktopLauncher {
 		config.width = 800;
 		config.height= 800;
 		config.resizable = false;
-		config.backgroundFPS = 5;
+		config.backgroundFPS = 60;
 		new LwjglApplication(new TanksGame(), config);
 	}
 }
