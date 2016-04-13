@@ -15,7 +15,7 @@ import static model.Kierunek.LEWO;
 public class TanksGame extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture czolg_ziel,czolg_czer, czolg_nieb, czolg_pom;
-	Texture  zarosla, cegly, kamien, pocisk;
+	Texture  zarosla, cegly, kamien, pociskTexture;
     Czolg czolg = new Czolg(1,5, Stale.CZOLG_START_X*Stale.ROZMIAR_CZOLGU, Stale.CZOLG_START_Y*Stale.ROZMIAR_CZOLGU );
     Plansza plansza;
 
@@ -30,7 +30,7 @@ public class TanksGame extends ApplicationAdapter {
         czolg_ziel = new Texture("zielonyCzolg.png");
         zarosla = new Texture("krzak.png");
         cegly = new Texture("cegla.png");
-        pocisk = new Texture("pocisk.png");
+        pociskTexture = new Texture("pocisk.png");
         czolg.setKierunek(LEWO);
 	}
 
@@ -48,7 +48,7 @@ public class TanksGame extends ApplicationAdapter {
                 (float)czolg.getWidth(), (float)czolg.getHeight(), 1f, 1f, (float)czolg.getKierunek().getValue()*90);
         drawBoard();
         drawMissiles();
-        updateMisslesState();
+        updateMissilesState();
         batch.end();
 	}
 
@@ -88,33 +88,38 @@ public class TanksGame extends ApplicationAdapter {
     }
 
     private void drawMissiles(){
+        double fWsp = 100.5 * 1.0/60.0;
         //Podobna funkcja jak dla rysowania czołgu
-        for (Pocisk obiekt:plansza.listaPociskow){
-            batch.draw(new TextureRegion(pocisk), (float)obiekt.getX(), (float)obiekt.getY(),
-                    (float)obiekt.getCenterX()-(float)obiekt.getX(), (float)obiekt.getCenterY()-(float)obiekt.getY(),
-                    (float)obiekt.getWidth(), (float)obiekt.getHeight(), 1f, 1f, (float)obiekt.getKierunek().getValue()*90);
-            switch (obiekt.getKierunek()){
+        for (Pocisk pocisk:plansza.listaPociskow){
+            batch.draw(new TextureRegion(pociskTexture),
+                    (float) pocisk.getX(), (float) pocisk.getY(),
+                    (float) pocisk.getCenterX()-(float) pocisk.getX(), (float) pocisk.getCenterY()-(float) pocisk.getY(),
+                    (float) pocisk.getWidth(), (float) pocisk.getHeight(),
+                    1f, 1f,
+                    (float) pocisk.getKierunek().getValue()*90);
+
+            switch ( pocisk.getKierunek()){
                 case LEWO: {
-                    obiekt.x--;
+                    pocisk.x -= fWsp;
                     break;
                 }
                 case PRAWO: {
-                    obiekt.x++;
+                    pocisk.x += fWsp;
                     break;
                 }
                 case GORA: {
-                    obiekt.y++;
+                    pocisk.y += fWsp;
                     break;
                 }
                 case DOL: {
-                    obiekt.y--;
+                    pocisk.y -= fWsp;
                     break;
                 }
             }
         }
     }
 
-    private void updateMisslesState(){
+    private void updateMissilesState(){
         //Usuwanie pocisków po wylocie z planszy
         for (int i=0; i<plansza.listaPociskow.size(); i++){
             Pocisk pocisk = plansza.listaPociskow.get(i);
@@ -141,9 +146,6 @@ public class TanksGame extends ApplicationAdapter {
     private void launchMissle(){
         int start_x = 0;
         int start_y = 0;
-        //TODO
-        //NIECH POCISKI WYLATUJĄ Z LUFY!
-
         switch(czolg.getKierunek()){
             case LEWO:{
                 start_x = (int)(czolg.getX());
@@ -156,12 +158,12 @@ public class TanksGame extends ApplicationAdapter {
                 break;
             }
             case GORA:{
-                start_x = (int)(czolg.getX()+ czolg.width/2 -5 );
+                start_x = (int)(czolg.getX()+ czolg.width/2 - 5);
                 start_y = (int)(czolg.getY() + czolg.height);
                 break;
             }
             case DOL:{
-                start_x = (int)(czolg.getX()+ czolg.width/2 -5 );
+                start_x = (int)(czolg.getX()+ czolg.width/2 - 5);
                 start_y = (int)(czolg.getY());
                 break;
             }
@@ -176,23 +178,23 @@ public class TanksGame extends ApplicationAdapter {
     private void collisionDetector(int x, int y){
         //uniemożliwienie wyjechania poza planszę
         if (czolg.getX() >= Stale.SZEROKOSC-Stale.ROZMIAR_CZOLGU || czolg.getX() <=0 ||
-                czolg.getY() <= 0 || czolg.getY() >= Stale.WYSOKOSC-Stale.ROZMIAR_CZOLGU){
+            czolg.getY() <= 0 || czolg.getY() >= Stale.WYSOKOSC-Stale.ROZMIAR_CZOLGU)
+        {
             czolg.x = x;
             czolg.y = y;
-        }
-        //sprawdzenie kolizji, czyli dzięki temu czołg nie wjeżdża na bloki (chyba, że to zarośla)
-        else {
+        } else { /* //sprawdzenie kolizji, czyli dzięki temu czołg nie wjeżdża na bloki (chyba, że to zarośla) */
             boolean jest_kolizja = false;
-            for (Blok obiekt : plansza.listaObiektow) {
-                if (obiekt.intersection(czolg).width >2 && obiekt.intersection(czolg).height >2 && obiekt.getSymbol() != 'Z') {
+            for (Blok obiekt : plansza.listaObiektow)
+            {
+                if (obiekt.intersection(czolg).width >2 && obiekt.intersection(czolg).height >2 && obiekt.getSymbol() != 'Z')
+                {
                     jest_kolizja = true;
                     break;
                 }
             }
 
-
-            //Jeśli wystąpiła kolizja z blokiem, to cofnij na pole sprzed zmiany
-            if (jest_kolizja) {
+            if (jest_kolizja) /*  //Jeśli wystąpiła kolizja z blokiem, to cofnij na pole sprzed zmiany */
+            {
                 czolg.x = x;
                 czolg.y = y;
             }
@@ -235,7 +237,7 @@ public class TanksGame extends ApplicationAdapter {
 		czolg_pom.dispose();
 		czolg_ziel.dispose();
 		zarosla.dispose();
-        pocisk.dispose();
+        pociskTexture.dispose();
 		cegly.dispose();
 	}
 

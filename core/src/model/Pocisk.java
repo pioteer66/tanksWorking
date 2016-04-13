@@ -3,9 +3,6 @@ package model;
 import java.awt.*;
 import com.mygdx.tanks.Stale;
 
-/**
- * Created by Dawid on 2016-04-12.
- */
 public class Pocisk extends Rectangle {
     private Kierunek kierunek;
     private Czolg wystrzelil;
@@ -13,23 +10,23 @@ public class Pocisk extends Rectangle {
     private int koniec_y;
 
     public Pocisk(Czolg wystrzelil, Kierunek kierunek){
-        this.width =13;
-        this.height =10;
+        super();
+        this.width = 13;
+        this.height = 10;
         if (kierunek == Kierunek.LEWO || kierunek == Kierunek.DOL)
         {
             this.koniec_x = 0;
             this.koniec_y = 0;
-        }
-        else{
+        } else {
             this.koniec_x = Stale.SZEROKOSC;
             this.koniec_y = Stale.WYSOKOSC;
         }
-        this.kierunek=wystrzelil.getKierunek();
-        this.wystrzelil=wystrzelil;
+        this.kierunek = wystrzelil.getKierunek();
+        this.wystrzelil = wystrzelil;
     }
 
     public Kierunek getKierunek() {
-        return kierunek;
+        return this.kierunek;
     }
 
     public void setKierunek(Kierunek kierunek) {
@@ -37,7 +34,7 @@ public class Pocisk extends Rectangle {
     }
 
     public Czolg getWystrzelil() {
-        return wystrzelil;
+        return this.wystrzelil;
     }
 
     public void setWystrzelil(Czolg wystrzelil) {
