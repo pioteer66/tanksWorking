@@ -109,7 +109,10 @@ public class TanksGame extends ApplicationAdapter {
                 czolg.setTekstura(czolg_czer_G);
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
-                Pocisk pocisk = new Pocisk();
+                int czolgX = czolg.getPolozenie().x;
+                int czolgY = czolg.getPolozenie().y;
+                czolg.getKierunek()
+                Pocisk pocisk = new Pocisk(czolgX, czolgY, );
                 plansza.listaPociskow.add(pocisk);
             }
 

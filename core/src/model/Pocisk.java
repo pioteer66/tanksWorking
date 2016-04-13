@@ -4,17 +4,15 @@ package model;
  * Created by Dawid on 2016-04-12.
  */
 public class Pocisk {
-    private int startowyX, startowyY, koncowyX,koncowyY,polX, polY;
+    private int startowyX, startowyY, koncowyX,koncowyY;
     private Czolg wystrzelil;
     private int idPocisku;
 
-    public Pocisk(int sX,int sY, int kX, int kY, int kierunekCzolgu){
+    public Pocisk(int sX,int sY, int kX, int kY){
         this.startowyX = sX;
         this.startowyY = sY;
         this.koncowyX = kX;
         this.koncowyY = kY;
-        this.polX  = sX;
-        this.polY = sY;
         // tds
     }
 
