@@ -9,7 +9,7 @@ public class Blok extends Rectangle{
     protected char symbol;
 
     public Blok(int polozenieX, int polozenieY){
-        super(polozenieX, polozenieY, 50, 50);
+        super(polozenieX, polozenieY, 25, 25);
     }
 
 

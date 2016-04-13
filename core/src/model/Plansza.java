@@ -19,15 +19,15 @@ public class Plansza {
                     char znak = linia.charAt(j * 2);
                     switch (znak) {
                         case 'C': {
-                            this.listaObiektow.add(new Cegly(j, i));
+                            this.listaObiektow.add(new Cegly(j*25, i*25));
                             break;
                         }
                         case 'K': {
-                            this.listaObiektow.add(new Kamien(j, i));
+                            this.listaObiektow.add(new Kamien(j*25, i*25));
                             break;
                         }
                         case 'Z': {
-                            this.listaObiektow.add(new Zarosla(j, i));
+                            this.listaObiektow.add(new Zarosla(j*25, i*25));
                             break;
                         }
                     }

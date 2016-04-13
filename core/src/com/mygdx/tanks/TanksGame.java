@@ -18,7 +18,7 @@ public class TanksGame extends ApplicationAdapter {
 	Texture czolg_ziel,czolg_czer_L, czolg_nieb, czolg_pom;
     Texture czolg_czer_P, czolg_czer_G, czolg_czer_D;
 	Texture  zarosla, cegly, kamien;
-    Czolg czolg = new Czolg(1,5, Stale.CZOLG_START_X, Stale.CZOLG_START_Y );
+    Czolg czolg = new Czolg(1,5, Stale.CZOLG_START_X*Stale.ROZMIAR_CZOLGU, Stale.CZOLG_START_Y*Stale.ROZMIAR_CZOLGU );
     Plansza plansza;
 
 	@Override
@@ -41,12 +41,15 @@ public class TanksGame extends ApplicationAdapter {
 	@Override
 	public void render () {
         update();
-        Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+        Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         drawBoard();
-        batch.draw(new TextureRegion(czolg_czer_L), (float)czolg.getX(), (float)czolg.getY(), (float)czolg.getCenterX(), (float)czolg.getCenterY(),
-                (float)czolg.getWidth(), (float)czolg.getHeight(), 0.5f, 0.5f, (float)czolg.getKierunek().getValue()*90);
+        double x = czolg.getX();
+        double y = czolg.getY();
+        batch.draw(new TextureRegion(czolg_czer_L), (float)x, (float)y,
+                (float)czolg.getCenterX()-(float)x, (float)czolg.getCenterY()-(float)y,
+                (float)czolg.getWidth(), (float)czolg.getHeight(), 1f, 1f, (float)czolg.getKierunek().getValue()*90);
         batch.end();
 	}
 
@@ -69,15 +72,15 @@ public class TanksGame extends ApplicationAdapter {
         for (Blok obiekt:plansza.listaObiektow){
             switch (obiekt.getSymbol()){
                 case 'C':{
-                    batch.draw(cegly, (int)obiekt.getX(), Stale.WYSOKOSC*(int)obiekt.getY());
+                    batch.draw(cegly, (int)obiekt.getX(), Stale.WYSOKOSC-(int)obiekt.getY());
                     break;
                 }
                 case 'K':{
-                    batch.draw(kamien, (int)obiekt.getX(), Stale.WYSOKOSC*(int)obiekt.getY());
+                    batch.draw(kamien, (int)obiekt.getX(), Stale.WYSOKOSC-(int)obiekt.getY());
                     break;
                 }
                 case 'Z':{
-                    batch.draw(zarosla, (int)obiekt.getX(), Stale.WYSOKOSC-25*(int)obiekt.getY());
+                    batch.draw(zarosla, (int)obiekt.getX(), Stale.WYSOKOSC-(int)obiekt.getY());
                     break;
                 }
             }
