@@ -46,8 +46,9 @@ public class TanksGame extends ApplicationAdapter {
         batch.draw(new TextureRegion(czolg_czer), (float)x, (float)y,
                 (float)czolg.getCenterX()-(float)x, (float)czolg.getCenterY()-(float)y,
                 (float)czolg.getWidth(), (float)czolg.getHeight(), 1f, 1f, (float)czolg.getKierunek().getValue()*90);
-        drawMissiles();
         drawBoard();
+        drawMissiles();
+        updateMisslesState();
         batch.end();
 	}
 
@@ -67,7 +68,7 @@ public class TanksGame extends ApplicationAdapter {
 		super.resume();
 	}
 
-    public void drawBoard(){
+    private void drawBoard(){
         for (Blok obiekt:plansza.listaObiektow){
             switch (obiekt.getSymbol()){
                 case 'C':{
@@ -86,7 +87,7 @@ public class TanksGame extends ApplicationAdapter {
         }
     }
 
-    public void drawMissiles(){
+    private void drawMissiles(){
         //Podobna funkcja jak dla rysowania czołgu
         for (Pocisk obiekt:plansza.listaPociskow){
             batch.draw(new TextureRegion(pocisk), (float)obiekt.getX(), (float)obiekt.getY(),
@@ -113,10 +114,94 @@ public class TanksGame extends ApplicationAdapter {
         }
     }
 
-    public void update(){
+    private void updateMisslesState(){
+        //Usuwanie pocisków po wylocie z planszy
+        for (int i=0; i<plansza.listaPociskow.size(); i++){
+            Pocisk pocisk = plansza.listaPociskow.get(i);
+            switch(pocisk.getKierunek()){
+                case LEWO: {
+                    if (pocisk.getX() <= 0) plansza.listaPociskow.remove(i);
+                    break;
+                }
+                case PRAWO: {
+                    if (pocisk.getX() >= Stale.SZEROKOSC) plansza.listaPociskow.remove(i);
+                    break;
+                }
+                case GORA: {
+                    if (pocisk.getY() >= Stale.WYSOKOSC) plansza.listaPociskow.remove(i);
+                    break;
+                }
+                case DOL: {
+                    if (pocisk.getY() <= 0) plansza.listaPociskow.remove(i);
+                    break;
+                }
+            }
+        }
+    }
+    private void launchMissle(){
+        int start_x = 0;
+        int start_y = 0;
+        //TODO
+        //NIECH POCISKI WYLATUJĄ Z LUFY!
+
+        switch(czolg.getKierunek()){
+            case LEWO:{
+                start_x = (int)(czolg.getX());
+                start_y = (int) (czolg.getY() + czolg.height/2  - 5);
+                break;
+            }
+            case PRAWO:{
+                start_x = (int)(czolg.getX()+czolg.width);
+                start_y = (int) (czolg.getY() + czolg.height/2 - 5);
+                break;
+            }
+            case GORA:{
+                start_x = (int)(czolg.getX()+ czolg.width/2 -5 );
+                start_y = (int)(czolg.getY() + czolg.height);
+                break;
+            }
+            case DOL:{
+                start_x = (int)(czolg.getX()+ czolg.width/2 -5 );
+                start_y = (int)(czolg.getY());
+                break;
+            }
+
+        }
+        //start_x i start_y to początkowa pozycja pocisku
+        Pocisk pocisk = new Pocisk(czolg, czolg.getKierunek());
+        pocisk.x = start_x;
+        pocisk.y = start_y;
+        plansza.listaPociskow.add(pocisk);
+    }
+    private void collisionDetector(int x, int y){
+        //uniemożliwienie wyjechania poza planszę
+        if (czolg.getX() >= Stale.SZEROKOSC-Stale.ROZMIAR_CZOLGU || czolg.getX() <=0 ||
+                czolg.getY() <= 0 || czolg.getY() >= Stale.WYSOKOSC-Stale.ROZMIAR_CZOLGU){
+            czolg.x = x;
+            czolg.y = y;
+        }
+        //sprawdzenie kolizji, czyli dzięki temu czołg nie wjeżdża na bloki (chyba, że to zarośla)
+        else {
+            boolean jest_kolizja = false;
+            for (Blok obiekt : plansza.listaObiektow) {
+                if (obiekt.intersection(czolg).width >2 && obiekt.intersection(czolg).height >2 && obiekt.getSymbol() != 'Z') {
+                    jest_kolizja = true;
+                    break;
+                }
+            }
+
+
+            //Jeśli wystąpiła kolizja z blokiem, to cofnij na pole sprzed zmiany
+            if (jest_kolizja) {
+                czolg.x = x;
+                czolg.y = y;
+            }
+        }
+    }
+
+    private void update(){
         int x = (int)czolg.getX();
         int y = (int)czolg.getY();
-        Kierunek k = czolg.getKierunek();
         //Odczyt klawiszy
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT)){
                 czolg.x-=Stale.PREDKOSC_CZOLGU ;
@@ -135,85 +220,11 @@ public class TanksGame extends ApplicationAdapter {
                 czolg.setKierunek(Kierunek.DOL);
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
-                int start_x = 0;
-                int start_y = 0;
-                //TODO
-                //NIECH POCISKI WYLATUJĄ Z LUFY!
-                
-                switch(czolg.getKierunek()){
-                    case LEWO:{
-                        start_x = (int)(czolg.getX());
-                        start_y = (int) (czolg.getY() + czolg.height/2  - 5);
-                        break;
-                    }
-                    case PRAWO:{
-                        start_x = (int)(czolg.getX()+czolg.width);
-                        start_y = (int) (czolg.getY() + czolg.height/2 - 5);
-                        break;
-                    }
-                    case GORA:{
-                        start_x = (int)(czolg.getX()+ czolg.width/2 -5 );
-                        start_y = (int)(czolg.getY() + czolg.height);
-                        break;
-                    }
-                    case DOL:{
-                        start_x = (int)(czolg.getX()+ czolg.width/2 -5 );
-                        start_y = (int)(czolg.getY());
-                        break;
-                    }
-
-                }
-                //start_x i start_y to początkowa pozycja pocisku
-                Pocisk nowy = new Pocisk(czolg, czolg.getKierunek());
-                nowy.x = start_x;
-                nowy.y = start_y;
-                plansza.listaPociskow.add(nowy);
+                this.launchMissle();
             }
-        //uniemożliwienie wyjechania poza planszę
-        if (czolg.getX() >= Stale.SZEROKOSC-Stale.ROZMIAR_CZOLGU || czolg.getX() <=0 ||
-                czolg.getY() <= 0 || czolg.getY() >= Stale.WYSOKOSC-Stale.ROZMIAR_CZOLGU){
-            czolg.x = x;
-            czolg.y = y;
-        }
-        //sprawdzenie kolizji, czyli dzięki temu czołg nie wjeżdża na bloki (chyba, że to zarośla)
-        else {
-            boolean jest_kolizja = false;
-            for (Blok obiekt : plansza.listaObiektow) {
-                if (obiekt.intersection(czolg).width >2 && obiekt.intersection(czolg).height >2 && obiekt.getSymbol() != 'Z') {
-                    jest_kolizja = true;
-                    break;
-                }
-            }
-            //Usuwanie pocisków po wylocie z planszy
-            for (int i=0; i<plansza.listaPociskow.size(); i++){
-                Pocisk pocisk = plansza.listaPociskow.get(i);
-                switch(pocisk.getKierunek()){
-                    case LEWO: {
-                        if (pocisk.getX() <= 0) plansza.listaPociskow.remove(i);
-                        break;
-                    }
-                    case PRAWO: {
-                        if (pocisk.getX() >= Stale.SZEROKOSC) plansza.listaPociskow.remove(i);
-                        break;
-                    }
-                    case GORA: {
-                        if (pocisk.getY() >= Stale.WYSOKOSC) plansza.listaPociskow.remove(i);
-                        break;
-                    }
-                    case DOL: {
-                        if (pocisk.getY() <= 0) plansza.listaPociskow.remove(i);
-                        break;
-                    }
-                }
-            }
-            
-            //Jeśli wystąpiła kolizja z blokiem, to cofnij na pole sprzed zmiany
-            if (jest_kolizja) {
-                czolg.x = x;
-                czolg.y = y;
-            }
-        }
+        collisionDetector(x,y);
     }
+
 
 	@Override
 	public void dispose() {
