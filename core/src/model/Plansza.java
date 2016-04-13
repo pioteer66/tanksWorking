@@ -5,11 +5,11 @@ import java.util.ArrayList;
 
 public class Plansza {
     public ArrayList <Blok> listaObiektow;
-    public ArrayList listaPociskow;
+    public ArrayList<Pocisk> listaPociskow;
 
     public Plansza(String path){
         listaObiektow = new ArrayList<Blok>();
-        listaPociskow = new ArrayList();
+        listaPociskow = new ArrayList<Pocisk>();
         try{
             BufferedReader br = new BufferedReader(new FileReader("plansza.txt"));
             br.read();

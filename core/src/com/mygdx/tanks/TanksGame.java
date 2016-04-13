@@ -51,6 +51,7 @@ public class TanksGame extends ApplicationAdapter {
         batch.begin();
         drawBoard();
         batch.draw(czolg.getTekstura(), czolg.getPolozenieNaPlanszy().x, czolg.getPolozenieNaPlanszy().y);
+
         batch.end();
 	}
 
@@ -106,10 +107,8 @@ public class TanksGame extends ApplicationAdapter {
                 czolg.setKierunek(Kierunek.GORA);
                 czolg.setTekstura(czolg_czer_G);
             }
-            else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-                y--;
-                czolg.setKierunek(Kierunek.DOL);
-                czolg.setTekstura(czolg_czer_D);
+            else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
+                // strzał
             }
 
         czolg.setPolozenieNaPlanszy(new Point(x,y));
