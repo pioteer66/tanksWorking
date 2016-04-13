@@ -4,19 +4,21 @@ package model;
 import java.awt.*;
 
 
-public class Blok {
-    protected Point polozenie = new Point();
+public class Blok extends Rectangle{
     protected int wytrzymalosc;
-    public char symbol;
+    protected char symbol;
 
-    public Point getPolozenie() {
-        return polozenie;
+    public Blok(int polozenieX, int polozenieY){
+        super(polozenieX, polozenieY, 50, 50);
     }
 
-    public void setPolozenie(int x, int y) {
-        polozenie.setLocation(x,y);
+    public char getSymbol() {
+        return symbol;
     }
 
+    public void setSymbol(char symbol) {
+        this.symbol = symbol;
+    }
     public int getWytrzymalosc() {
         return wytrzymalosc;
     }
