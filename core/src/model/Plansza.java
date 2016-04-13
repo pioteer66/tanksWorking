@@ -6,7 +6,7 @@ import com.mygdx.tanks.Stale;
 
 public class Plansza {
     public ArrayList <Blok> listaObiektow;
-    public ArrayList listaPociskow;
+    public ArrayList <Pocisk> listaPociskow;
 
     public Plansza(String path) {
         listaObiektow = new ArrayList<Blok>();
