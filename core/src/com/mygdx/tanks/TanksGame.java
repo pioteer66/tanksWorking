@@ -139,6 +139,7 @@ public class TanksGame extends ApplicationAdapter {
                 int start_y = 0;
                 //TODO
                 //NIECH POCISKI WYLATUJĄ Z LUFY!
+                
                 switch(czolg.getKierunek()){
                     case LEWO:{
                         start_x = (int)(czolg.getX());
