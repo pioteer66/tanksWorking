@@ -19,9 +19,13 @@ public class TanksGame extends ApplicationAdapter {
 	Texture  zarosla, cegly, kamien, pociskTexture;
     Czolg czolg = new Czolg(1,5, Stale.CZOLG_START_X*Stale.ROZMIAR_CZOLGU, Stale.CZOLG_START_Y*Stale.ROZMIAR_CZOLGU );
     Plansza plansza;
+
+    /* Zmienne do przeładowywania działa */
     private Date date;
     private long czasP;
     private long czasK;
+    private long przeladowanieDziala; //milisekundy
+    private double predkoscPocisku;     // jednostki odswiezen
 
 	@Override
 	public void create () {
@@ -36,10 +40,12 @@ public class TanksGame extends ApplicationAdapter {
         cegly = new Texture("cegla.png");
         pociskTexture = new Texture("pocisk.png");
         czolg.setKierunek(LEWO);
+
         this.date = new Date();
         this.czasP = date.getTime();
         this.czasK = date.getTime();
-
+        this.przeladowanieDziala = 800; //ms
+        this.predkoscPocisku = 150.0; // jednostek
 	}
 
 	@Override
@@ -58,7 +64,7 @@ public class TanksGame extends ApplicationAdapter {
         drawMissiles();
         updateMissilesState();
         batch.end();
-        this.date = new Date();
+        this.date = new Date(); // aktualizuje czas
 	}
 
 	@Override
@@ -76,8 +82,6 @@ public class TanksGame extends ApplicationAdapter {
 	public void resume() {
 		super.resume();
 	}
-
-    //private double getWspCzas(){return this.wspCzas;}
 
     private void drawBoard(){
         for (Blok obiekt:plansza.listaObiektow){
@@ -99,7 +103,7 @@ public class TanksGame extends ApplicationAdapter {
     }
 
     private void drawMissiles(){
-        double fWsp = 100.5 * 1.0 / Gdx.graphics.getFramesPerSecond();
+        double fWsp = this.predkoscPocisku *( 1.0 / Gdx.graphics.getFramesPerSecond()); // predkosc = jednoski / ramke
         //Podobna funkcja jak dla rysowania czołgu
         for (Pocisk pocisk:plansza.listaPociskow){
             batch.draw(new TextureRegion(pociskTexture),
@@ -155,7 +159,7 @@ public class TanksGame extends ApplicationAdapter {
         }
     }
     private void launchMissle(){
-        if(this.czasP >= czasK) {
+        if(this.czasP >= czasK) { /* sprawdza czy upłyna rzadany czas przaładowania */
             int start_x = 0;
             int start_y = 0;
             switch (czolg.getKierunek()) {
@@ -186,7 +190,7 @@ public class TanksGame extends ApplicationAdapter {
             pocisk.x = start_x;
             pocisk.y = start_y;
             plansza.listaPociskow.add(pocisk);
-            czasK = this.date.getTime() + 800;
+            czasK = this.date.getTime() + this.przeladowanieDziala;
         }
     }
     private void collisionDetector(int x, int y){
