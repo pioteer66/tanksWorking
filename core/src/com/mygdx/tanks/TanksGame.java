@@ -132,8 +132,28 @@ public class TanksGame extends ApplicationAdapter {
                 czolg.setKierunek(Kierunek.DOL);
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
-                int start_x = (int)(czolg.getX()+czolg.width);
-                int start_y = (int) (czolg.getY() + czolg.height/2);
+                int start_x = 0;
+                int start_y = 0;
+                switch(czolg.getKierunek()){
+                    case LEWO:{
+                        start_x = (int)(czolg.getX());
+                        start_y = (int) (czolg.getY() + czolg.height/2);
+                    }
+                    case PRAWO:{
+                        start_x = (int)(czolg.getX()+czolg.width);
+                        start_y = (int) (czolg.getY() + czolg.height/2);
+                    }
+                    case GORA:{
+                        start_x = (int)(czolg.getX()+ czolg.width/2);
+                        start_y = (int)(czolg.getY() + czolg.height);
+                    }
+                    case DOL:{
+                        start_x = (int)(czolg.getX()+ czolg.width/2);
+                        start_y = (int)(czolg.getY());
+                    }
+
+                }
+
                 Pocisk nowy = new Pocisk(czolg, czolg.getKierunek());
                 nowy.x = start_x;
                 nowy.y = start_y;
