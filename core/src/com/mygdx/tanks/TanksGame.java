@@ -111,9 +111,17 @@ public class TanksGame extends ApplicationAdapter {
             else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
                 int czolgX = czolg.getPolozenie().x;
                 int czolgY = czolg.getPolozenie().y;
-                int koncaX, koncaY;
-                if (czolg.getKierunek() == Kierunek.DOL) 
-                Pocisk pocisk = new Pocisk(czolgX, czolgY, );
+                int koncaX = czolgX, koncaY = czolgY;
+                if (czolg.getKierunek() == Kierunek.DOL) {
+                    koncaY = 0;
+                } else if (czolg.getKierunek() == Kierunek.PRAWO) {
+                    koncaX = 800;
+                } else if (czolg.getKierunek() == Kierunek.GORA) {
+                    koncaY = 800;
+                } else if (czolg.getKierunek() == Kierunek.LEWO) {
+                    koncaX = 0;
+                }
+                Pocisk pocisk = new Pocisk(czolgX, czolgY, koncaX, koncaY);
                 plansza.listaPociskow.add(pocisk);
             }
 
