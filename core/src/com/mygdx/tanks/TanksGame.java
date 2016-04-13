@@ -143,19 +143,23 @@ public class TanksGame extends ApplicationAdapter {
                 switch(czolg.getKierunek()){
                     case LEWO:{
                         start_x = (int)(czolg.getX());
-                        start_y = (int) (czolg.getY() + czolg.height/2);
+                        start_y = (int) (czolg.getY() + czolg.height/2  - 5);
+                        break;
                     }
                     case PRAWO:{
                         start_x = (int)(czolg.getX()+czolg.width);
-                        start_y = (int) (czolg.getY() + czolg.height/2);
+                        start_y = (int) (czolg.getY() + czolg.height/2 - 5);
+                        break;
                     }
                     case GORA:{
-                        start_x = (int)(czolg.getX()+ czolg.width/2);
+                        start_x = (int)(czolg.getX()+ czolg.width/2 -5 );
                         start_y = (int)(czolg.getY() + czolg.height);
+                        break;
                     }
                     case DOL:{
-                        start_x = (int)(czolg.getX()+ czolg.width/2);
+                        start_x = (int)(czolg.getX()+ czolg.width/2 -5 );
                         start_y = (int)(czolg.getY());
+                        break;
                     }
 
                 }
