@@ -200,6 +200,7 @@ public class TanksGame extends ApplicationAdapter {
                     }
                 }
             }
+            
             //Jeśli wystąpiła kolizja z blokiem, to cofnij na pole sprzed zmiany
             if (jest_kolizja) {
                 czolg.x = x;
