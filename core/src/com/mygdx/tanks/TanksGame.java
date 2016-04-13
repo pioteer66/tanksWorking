@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import model.*;
 import java.util.Date;
-
+import java.awt.Rectangle;
 import static model.Kierunek.LEWO;
 
 public class TanksGame extends ApplicationAdapter {
@@ -45,7 +45,7 @@ public class TanksGame extends ApplicationAdapter {
         this.czasP = date.getTime();
         this.czasK = date.getTime();
         this.przeladowanieDziala = 800; //ms
-        this.predkoscPocisku = 150.0; // jednostek
+        this.predkoscPocisku = 200.0; // jednostek
 	}
 
 	@Override
@@ -60,9 +60,9 @@ public class TanksGame extends ApplicationAdapter {
         batch.draw(new TextureRegion(czolg_czer), (float)x, (float)y,
                 (float)czolg.getCenterX()-(float)x, (float)czolg.getCenterY()-(float)y,
                 (float)czolg.getWidth(), (float)czolg.getHeight(), 1f, 1f, (float)czolg.getKierunek().getValue()*90);
-        drawBoard();
         drawMissiles();
         updateMissilesState();
+        drawBoard();
         batch.end();
         this.date = new Date(); // aktualizuje czas
 	}
@@ -84,6 +84,7 @@ public class TanksGame extends ApplicationAdapter {
 	}
 
     private void drawBoard(){
+        Rectangle rect;
         for (Blok obiekt:plansza.listaObiektow){
             switch (obiekt.getSymbol()){
                 case 'C':{
@@ -97,6 +98,16 @@ public class TanksGame extends ApplicationAdapter {
                 case 'Z':{
                     batch.draw(zarosla, (int)obiekt.getX(), (int)obiekt.getY());
                     break;
+                }
+            }
+
+            // szybka kolizja pociskow -- potem zastapi ja serwer
+            if(obiekt.getSymbol() != 'Z') {
+                rect = new Rectangle((int) obiekt.getX(), (int) obiekt.getY() + 25, 25, 25);
+                for (int i = 0; i < this.plansza.listaPociskow.size(); i++) {
+                    if (rect.contains(this.plansza.listaPociskow.get(i).getCenterX(), this.plansza.listaPociskow.get(i).getCenterY())) {
+                        this.plansza.listaPociskow.remove(i);
+                    }
                 }
             }
         }
@@ -158,7 +169,7 @@ public class TanksGame extends ApplicationAdapter {
             }
         }
     }
-    private void launchMissle(){
+    private void launchMissile(){
         if(this.czasP >= czasK) { /* sprawdza czy upłyna rzadany czas przaładowania */
             int start_x = 0;
             int start_y = 0;
@@ -240,8 +251,8 @@ public class TanksGame extends ApplicationAdapter {
                 czolg.y-=Stale.PREDKOSC_CZOLGU;
                 czolg.setKierunek(Kierunek.DOL);
             }
-            else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
-                this.launchMissle();
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
+                this.launchMissile();
             }
         collisionDetector(x,y);
     }
