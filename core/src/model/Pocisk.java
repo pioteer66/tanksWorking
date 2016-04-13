@@ -17,16 +17,25 @@ public class Pocisk {
     }
 
     public boolean Aktualizuj(){
-        if (this.startowyX == this.koncowyX && this.startowyY == this.koncowyY ) return false;
+        if(this.startowyX  <= 0 || this.startowyX >= 800) return false;
+        if(this.startowyY  <= 0 || this.startowyY >= 800) return false;
 
         if(this.startowyX == this.koncowyX){
-            if(this.startowyY > this.koncowyY) this.startowyY--;
-            else if(this.startowyY < this.koncowyY) this.startowyY++;
+            if(this.startowyY > this.koncowyY) this.startowyY -= 3;
+            else if(this.startowyY < this.koncowyY) this.startowyY += 3;
         } else if (this.startowyY == this.koncowyY){
-            if(this.startowyX > this.koncowyX) this.startowyX--;
-            else if(this.startowyX < this.koncowyY) this.startowyX++;
+            if(this.startowyX > this.koncowyX) this.startowyX -= 3;
+            else if(this.startowyX < this.koncowyY) this.startowyX += 3;
         }
         return true;
+    }
+
+    public int getX(){
+        return this.startowyX;
+    }
+
+    public int getY(){
+        return this.startowyY;
     }
 
 }

@@ -50,11 +50,21 @@ public class TanksGame extends ApplicationAdapter {
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        drawBoard();
-        batch.draw(czolg.getTekstura(), czolg.getPolozenieNaPlanszy().x, czolg.getPolozenieNaPlanszy().y);
 
+        batch.draw(czolg.getTekstura(), czolg.getPolozenieNaPlanszy().x, czolg.getPolozenieNaPlanszy().y);
+        drawBoard();
+        drawBullet();
         batch.end();
 	}
+
+    private void drawBullet(){
+        for (Pocisk pocisk:plansza.listaPociskow){
+            batch.draw(cegly, pocisk.getX(), pocisk.getY());
+        }
+        for(int i = 0; i < plansza.listaPociskow.size(); i++){
+            if(!plansza.listaPociskow.get(i).Aktualizuj()) plansza.listaPociskow.remove(i);
+        }
+    }
 
 	@Override
 	public void resize(int width, int height) {
@@ -71,7 +81,7 @@ public class TanksGame extends ApplicationAdapter {
 		super.resume();
 	}
 
-    public void drawBoard(){
+    private void drawBoard(){
         for (Blok obiekt:plansza.listaObiektow){
             switch (obiekt.symbol){
                 case 'C':{
@@ -107,10 +117,14 @@ public class TanksGame extends ApplicationAdapter {
                 y++;
                 czolg.setKierunek(Kierunek.GORA);
                 czolg.setTekstura(czolg_czer_G);
+            } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+                y--;
+                czolg.setKierunek(Kierunek.DOL);
+                czolg.setTekstura(czolg_czer_D);
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
-                int czolgX = czolg.getPolozenie().x;
-                int czolgY = czolg.getPolozenie().y;
+                int czolgX = czolg.getPolozenieNaPlanszy().x;
+                int czolgY = czolg.getPolozenieNaPlanszy().y;
                 int koncaX = czolgX, koncaY = czolgY;
                 if (czolg.getKierunek() == Kierunek.DOL) {
                     koncaY = 0;
