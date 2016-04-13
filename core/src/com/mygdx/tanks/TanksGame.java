@@ -134,6 +134,8 @@ public class TanksGame extends ApplicationAdapter {
             else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
                 int start_x = 0;
                 int start_y = 0;
+                //TODO
+                //NIECH POCISKI WYLATUJĄ Z LUFY!
                 switch(czolg.getKierunek()){
                     case LEWO:{
                         start_x = (int)(czolg.getX());
