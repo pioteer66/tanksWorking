@@ -86,6 +86,7 @@ public class TanksGame extends ApplicationAdapter {
     }
 
     public void drawMissiles(){
+        //Podobna funkcja jak dla rysowania czołgu
         for (Pocisk obiekt:plansza.listaPociskow){
             batch.draw(new TextureRegion(pocisk), (float)obiekt.getX(), (float)obiekt.getY(),
                     (float)obiekt.getCenterX()-(float)obiekt.getX(), (float)obiekt.getCenterY()-(float)obiekt.getY(),
@@ -115,6 +116,7 @@ public class TanksGame extends ApplicationAdapter {
         int x = (int)czolg.getX();
         int y = (int)czolg.getY();
         Kierunek k = czolg.getKierunek();
+        //Odczyt klawiszy
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT)){
                 czolg.x-=Stale.PREDKOSC_CZOLGU ;
                 czolg.setKierunek(LEWO);
@@ -155,17 +157,19 @@ public class TanksGame extends ApplicationAdapter {
                     }
 
                 }
-
+                //start_x i start_y to początkowa pozycja pocisku
                 Pocisk nowy = new Pocisk(czolg, czolg.getKierunek());
                 nowy.x = start_x;
                 nowy.y = start_y;
                 plansza.listaPociskow.add(nowy);
             }
-        if (czolg.getX() >= Stale.SZEROKOSC-50 || czolg.getX() <=0 ||
-                czolg.getY() <= 0 || czolg.getY() >= Stale.WYSOKOSC-50){
+        //uniemożliwienie wyjechania poza planszę
+        if (czolg.getX() >= Stale.SZEROKOSC-Stale.ROZMIAR_CZOLGU || czolg.getX() <=0 ||
+                czolg.getY() <= 0 || czolg.getY() >= Stale.WYSOKOSC-Stale.ROZMIAR_CZOLGU){
             czolg.x = x;
             czolg.y = y;
         }
+        //sprawdzenie kolizji, czyli dzięki temu czołg nie wjeżdża na bloki (chyba, że to zarośla)
         else {
             boolean jest_kolizja = false;
             for (Blok obiekt : plansza.listaObiektow) {
@@ -196,6 +200,7 @@ public class TanksGame extends ApplicationAdapter {
                     }
                 }
             }
+            //Jeśli wystąpiła kolizja z blokiem, to cofnij na pole sprzed zmiany
             if (jest_kolizja) {
                 czolg.x = x;
                 czolg.y = y;
