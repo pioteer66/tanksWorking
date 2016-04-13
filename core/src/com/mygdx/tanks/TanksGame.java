@@ -10,7 +10,6 @@ import model.Blok;
 import model.Czolg;
 import model.Kierunek;
 import model.Plansza;
-import model.Pocisk;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -50,21 +49,10 @@ public class TanksGame extends ApplicationAdapter {
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-
-        batch.draw(czolg.getTekstura(), czolg.getPolozenieNaPlanszy().x, czolg.getPolozenieNaPlanszy().y);
         drawBoard();
-        drawBullet();
+        batch.draw(czolg.getTekstura(), czolg.getPolozenieNaPlanszy().x, czolg.getPolozenieNaPlanszy().y);
         batch.end();
 	}
-
-    private void drawBullet(){
-        for (Pocisk pocisk:plansza.listaPociskow){
-            batch.draw(cegly, pocisk.getX(), pocisk.getY());
-        }
-        for(int i = 0; i < plansza.listaPociskow.size(); i++){
-            if(!plansza.listaPociskow.get(i).Aktualizuj()) plansza.listaPociskow.remove(i);
-        }
-    }
 
 	@Override
 	public void resize(int width, int height) {
@@ -81,7 +69,7 @@ public class TanksGame extends ApplicationAdapter {
 		super.resume();
 	}
 
-    private void drawBoard(){
+    public void drawBoard(){
         for (Blok obiekt:plansza.listaObiektow){
             switch (obiekt.symbol){
                 case 'C':{
@@ -117,26 +105,11 @@ public class TanksGame extends ApplicationAdapter {
                 y++;
                 czolg.setKierunek(Kierunek.GORA);
                 czolg.setTekstura(czolg_czer_G);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+            }
+            else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)){
                 y--;
                 czolg.setKierunek(Kierunek.DOL);
                 czolg.setTekstura(czolg_czer_D);
-            }
-            else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
-                int czolgX = czolg.getPolozenieNaPlanszy().x;
-                int czolgY = czolg.getPolozenieNaPlanszy().y;
-                int koncaX = czolgX, koncaY = czolgY;
-                if (czolg.getKierunek() == Kierunek.DOL) {
-                    koncaY = 0;
-                } else if (czolg.getKierunek() == Kierunek.PRAWO) {
-                    koncaX = 800;
-                } else if (czolg.getKierunek() == Kierunek.GORA) {
-                    koncaY = 800;
-                } else if (czolg.getKierunek() == Kierunek.LEWO) {
-                    koncaX = 0;
-                }
-                Pocisk pocisk = new Pocisk(czolgX, czolgY, koncaX, koncaY);
-                plansza.listaPociskow.add(pocisk);
             }
 
         czolg.setPolozenieNaPlanszy(new Point(x,y));
