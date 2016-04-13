@@ -10,20 +10,16 @@ import model.Blok;
 import model.Czolg;
 import model.Kierunek;
 import model.Plansza;
-
 import java.awt.*;
-import java.awt.geom.Point2D;
-import java.io.File;
-import java.util.Random;
 
 public class TanksGame extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture czolg_ziel,czolg_czer_L, czolg_nieb, czolg_pom;
     Texture czolg_czer_P, czolg_czer_G, czolg_czer_D;
 	Texture  zarosla, cegly, kamien;
-    Czolg czolg = new Czolg(1,5,new Point(10,10));
+    Czolg czolg = new Czolg(1,5,new Point(Stale.CZOLG_START_X, Stale.CZOLG_START_Y ));
     Plansza plansza;
-	
+
 	@Override
 	public void create () {
         plansza = new Plansza("plansza.txt");
@@ -40,7 +36,7 @@ public class TanksGame extends ApplicationAdapter {
 		cegly = new Texture("mur.png");
         czolg.setKierunek(Kierunek.LEWO);
         czolg.setTekstura(czolg_czer_L);
-        czolg.setPolozenieNaPlanszy(new Point(10*25, 800-10*25));
+        czolg.setPolozenieNaPlanszy(new Point(10*25, Stale.WYSOKOSC-10*25));
 	}
 
 	@Override
@@ -73,15 +69,15 @@ public class TanksGame extends ApplicationAdapter {
         for (Blok obiekt:plansza.listaObiektow){
             switch (obiekt.symbol){
                 case 'C':{
-                    batch.draw(cegly, 25*obiekt.getPolozenie().x, 800-25*obiekt.getPolozenie().y);
+                    batch.draw(cegly, 25*obiekt.getPolozenie().x, Stale.WYSOKOSC-25*obiekt.getPolozenie().y);
                     break;
                 }
                 case 'K':{
-                    batch.draw(kamien, 25*obiekt.getPolozenie().x, 800-25*obiekt.getPolozenie().y);
+                    batch.draw(kamien, 25*obiekt.getPolozenie().x, Stale.WYSOKOSC*obiekt.getPolozenie().y);
                     break;
                 }
                 case 'Z':{
-                    batch.draw(zarosla, 25*obiekt.getPolozenie().x, 800-25*obiekt.getPolozenie().y);
+                    batch.draw(zarosla, 25*obiekt.getPolozenie().x, Stale.WYSOKOSC-25*obiekt.getPolozenie().y);
                     break;
                 }
             }
@@ -125,7 +121,6 @@ public class TanksGame extends ApplicationAdapter {
 		czolg_ziel.dispose();
 		zarosla.dispose();
 		cegly.dispose();
-
 	}
 
 	public TanksGame() {
