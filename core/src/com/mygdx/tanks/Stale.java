@@ -5,4 +5,6 @@ public class Stale {
     public static final int WYSOKOSC = 800;
     public static final int CZOLG_START_X = 10;
     public static final int CZOLG_START_Y = 10;
+    public static final int ROZMIAR_CZOLGU = 50;
+    public static final int ROZMIAR_BLOKU = 25;
 }

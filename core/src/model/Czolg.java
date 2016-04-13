@@ -50,7 +50,7 @@ public class Czolg extends Rectangle{
 
     public Czolg(int idGracza,int iloscZyc, int polozenieX, int polozenieY){
         //czy to nie jest szerokoscia i wysokoscia?
-        super(polozenieX,polozenieY,100,100);
+        super(polozenieX,polozenieY,50,50);
         this.idGracza=idGracza;
         this.zycia=iloscZyc;
         this.czyWRuchu=false;
