@@ -40,12 +40,12 @@ public class TanksGame extends ApplicationAdapter {
         Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        drawBoard();
         double x = czolg.getX();
         double y = czolg.getY();
-        batch.draw(new TextureRegion(czolg_czer), (float)x, (float)y,
+        batch.draw(new TextureRegion(czolg_czer), (float)x, Stale.SZEROKOSC-(float)y,
                 (float)czolg.getCenterX()-(float)x, (float)czolg.getCenterY()-(float)y,
                 (float)czolg.getWidth(), (float)czolg.getHeight(), 1f, 1f, (float)czolg.getKierunek().getValue()*90);
+        drawBoard();
         batch.end();
 	}
 
@@ -95,13 +95,24 @@ public class TanksGame extends ApplicationAdapter {
                 czolg.setKierunek(Kierunek.PRAWO);
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.UP)){
-                czolg.y++;
+                czolg.y--;
                 czolg.setKierunek(Kierunek.GORA);
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-                czolg.y--;
+                czolg.y++;
                 czolg.setKierunek(Kierunek.DOL);
             }
+        boolean jest_kolizja = false;
+        for (Blok obiekt:plansza.listaObiektow){
+            if (obiekt.intersects(czolg) && obiekt.getSymbol() != 'Z') {
+                jest_kolizja = true;
+                break;
+            }
+        }
+        if (jest_kolizja) {
+            czolg.x = x;
+            czolg.y = y;
+        }
     }
 
 	@Override
