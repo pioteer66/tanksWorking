@@ -64,6 +64,7 @@ public class TanksGame extends ApplicationAdapter {
 		super.pause();
 	}
 
+    
 	@Override
 	public void resume() {
 		super.resume();
