@@ -25,7 +25,7 @@ public class Pocisk {
             else if(this.startowyY < this.koncowyY) this.startowyY += 3;
         } else if (this.startowyY == this.koncowyY){
             if(this.startowyX > this.koncowyX) this.startowyX -= 3;
-            else if(this.startowyX < this.koncowyY) this.startowyX += 3;
+            else if(this.startowyX < this.koncowyX) this.startowyX += 3;
         }
         return true;
     }
