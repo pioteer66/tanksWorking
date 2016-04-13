@@ -10,6 +10,7 @@ import model.Blok;
 import model.Czolg;
 import model.Kierunek;
 import model.Plansza;
+import model.Pocisk;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -108,7 +109,8 @@ public class TanksGame extends ApplicationAdapter {
                 czolg.setTekstura(czolg_czer_G);
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
-                // strzał
+                Pocisk pocisk = new Pocisk();
+                plansza.listaPociskow.add(pocisk);
             }
 
         czolg.setPolozenieNaPlanszy(new Point(x,y));
