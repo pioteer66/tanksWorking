@@ -12,6 +12,7 @@ public class Blok extends Rectangle{
         super(polozenieX, polozenieY, 50, 50);
     }
 
+
     public char getSymbol() {
         return symbol;
     }
@@ -19,6 +20,7 @@ public class Blok extends Rectangle{
     public void setSymbol(char symbol) {
         this.symbol = symbol;
     }
+
     public int getWytrzymalosc() {
         return wytrzymalosc;
     }
@@ -26,4 +28,6 @@ public class Blok extends Rectangle{
     public void setWytrzymalosc(int wytrzymalosc) {
         this.wytrzymalosc = wytrzymalosc;
     }
+
+
 }
