@@ -37,6 +37,8 @@ public class TanksGame extends ApplicationAdapter {
         pociskTexture = new Texture("pocisk.png");
         czolg.setKierunek(LEWO);
         this.date = new Date();
+        this.czasP = date.getTime();
+        this.czasK = date.getTime();
 
 	}
 
@@ -56,6 +58,7 @@ public class TanksGame extends ApplicationAdapter {
         drawMissiles();
         updateMissilesState();
         batch.end();
+        this.date = new Date();
 	}
 
 	@Override
@@ -152,38 +155,39 @@ public class TanksGame extends ApplicationAdapter {
         }
     }
     private void launchMissle(){
-        int start_x = 0;
-        int start_y = 0;
-        long czas = date.getTime();
+        if(this.czasP >= czasK) {
+            int start_x = 0;
+            int start_y = 0;
+            switch (czolg.getKierunek()) {
+                case LEWO: {
+                    start_x = (int) (czolg.getX());
+                    start_y = (int) (czolg.getY() + czolg.height / 2 - 5);
+                    break;
+                }
+                case PRAWO: {
+                    start_x = (int) (czolg.getX() + czolg.width);
+                    start_y = (int) (czolg.getY() + czolg.height / 2 - 5);
+                    break;
+                }
+                case GORA: {
+                    start_x = (int) (czolg.getX() + czolg.width / 2 - 5);
+                    start_y = (int) (czolg.getY() + czolg.height);
+                    break;
+                }
+                case DOL: {
+                    start_x = (int) (czolg.getX() + czolg.width / 2 - 5);
+                    start_y = (int) (czolg.getY());
+                    break;
+                }
 
-        switch(czolg.getKierunek()){
-            case LEWO:{
-                start_x = (int)(czolg.getX());
-                start_y = (int) (czolg.getY() + czolg.height/2  - 5);
-                break;
             }
-            case PRAWO:{
-                start_x = (int)(czolg.getX()+czolg.width);
-                start_y = (int) (czolg.getY() + czolg.height/2 - 5);
-                break;
-            }
-            case GORA:{
-                start_x = (int)(czolg.getX()+ czolg.width/2 - 5);
-                start_y = (int)(czolg.getY() + czolg.height);
-                break;
-            }
-            case DOL:{
-                start_x = (int)(czolg.getX()+ czolg.width/2 - 5);
-                start_y = (int)(czolg.getY());
-                break;
-            }
-
+            //start_x i start_y to początkowa pozycja pocisku
+            Pocisk pocisk = new Pocisk(czolg, czolg.getKierunek());
+            pocisk.x = start_x;
+            pocisk.y = start_y;
+            plansza.listaPociskow.add(pocisk);
+            czasK = this.date.getTime() + 800;
         }
-        //start_x i start_y to początkowa pozycja pocisku
-        Pocisk pocisk = new Pocisk(czolg, czolg.getKierunek());
-        pocisk.x = start_x;
-        pocisk.y = start_y;
-        plansza.listaPociskow.add(pocisk);
     }
     private void collisionDetector(int x, int y){
         //uniemożliwienie wyjechania poza planszę
@@ -212,6 +216,7 @@ public class TanksGame extends ApplicationAdapter {
     }
 
     private void update(){
+        this.czasP = date.getTime();
         int x = (int)czolg.getX();
         int y = (int)czolg.getY();
         //Odczyt klawiszy
