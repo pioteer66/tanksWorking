@@ -1,41 +1,46 @@
 package model;
 
+import java.awt.*;
+import com.mygdx.tanks.Stale;
+
 /**
  * Created by Dawid on 2016-04-12.
  */
-public class Pocisk {
-    private int startowyX, startowyY, koncowyX,koncowyY;
+public class Pocisk extends Rectangle {
+    private Kierunek kierunek;
     private Czolg wystrzelil;
-    private int idPocisku;
+    private int koniec_x;
+    private int koniec_y;
 
-    public Pocisk(int sX,int sY, int kX, int kY){
-        this.startowyX = sX;
-        this.startowyY = sY;
-        this.koncowyX = kX;
-        this.koncowyY = kY;
-        // tds
-    }
-
-    public boolean Aktualizuj(){
-        if(this.startowyX  <= 0 || this.startowyX >= 800) return false;
-        if(this.startowyY  <= 0 || this.startowyY >= 800) return false;
-
-        if(this.startowyX == this.koncowyX){
-            if(this.startowyY > this.koncowyY) this.startowyY -= 3;
-            else if(this.startowyY < this.koncowyY) this.startowyY += 3;
-        } else if (this.startowyY == this.koncowyY){
-            if(this.startowyX > this.koncowyX) this.startowyX -= 3;
-            else if(this.startowyX < this.koncowyX) this.startowyX += 3;
+    public Pocisk(Czolg wystrzelil, Kierunek kierunek){
+        this.width =13;
+        this.height =10;
+        if (kierunek == Kierunek.LEWO || kierunek == Kierunek.DOL)
+        {
+            this.koniec_x = 0;
+            this.koniec_y = 0;
         }
-        return true;
+        else{
+            this.koniec_x = Stale.SZEROKOSC;
+            this.koniec_y = Stale.WYSOKOSC;
+        }
+        this.kierunek=wystrzelil.getKierunek();
+        this.wystrzelil=wystrzelil;
     }
 
-    public int getX(){
-        return this.startowyX;
+    public Kierunek getKierunek() {
+        return kierunek;
     }
 
-    public int getY(){
-        return this.startowyY;
+    public void setKierunek(Kierunek kierunek) {
+        this.kierunek = kierunek;
     }
 
+    public Czolg getWystrzelil() {
+        return wystrzelil;
+    }
+
+    public void setWystrzelil(Czolg wystrzelil) {
+        this.wystrzelil = wystrzelil;
+    }
 }
