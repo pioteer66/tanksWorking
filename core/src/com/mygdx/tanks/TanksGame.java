@@ -1,23 +1,24 @@
 package com.mygdx.tanks;
 
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import model.Blok;
 import model.Czolg;
 import model.Kierunek;
 import model.Plansza;
-import java.awt.*;
 
 public class TanksGame extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture czolg_ziel,czolg_czer_L, czolg_nieb, czolg_pom;
     Texture czolg_czer_P, czolg_czer_G, czolg_czer_D;
 	Texture  zarosla, cegly, kamien;
-    Czolg czolg = new Czolg(1,5,new Point(Stale.CZOLG_START_X, Stale.CZOLG_START_Y ));
+    Czolg czolg = new Czolg(1,5, Stale.CZOLG_START_X, Stale.CZOLG_START_Y );
     Plansza plansza;
 
 	@Override
@@ -35,8 +36,6 @@ public class TanksGame extends ApplicationAdapter {
 		zarosla = new Texture("zarosla.png");
 		cegly = new Texture("mur.png");
         czolg.setKierunek(Kierunek.LEWO);
-        czolg.setTekstura(czolg_czer_L);
-        czolg.setPolozenieNaPlanszy(new Point(10*25, Stale.WYSOKOSC-10*25));
 	}
 
 	@Override
@@ -46,7 +45,8 @@ public class TanksGame extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         drawBoard();
-        batch.draw(czolg.getTekstura(), czolg.getPolozenieNaPlanszy().x, czolg.getPolozenieNaPlanszy().y);
+        batch.draw(new TextureRegion(czolg_czer_L), (float)czolg.getX(), (float)czolg.getY(), (float)czolg.getCenterX(), (float)czolg.getCenterY(),
+                (float)czolg.getWidth(), (float)czolg.getHeight(), 0.5f, 0.5f, (float)czolg.getKierunek().getValue()*90);
         batch.end();
 	}
 
@@ -67,17 +67,17 @@ public class TanksGame extends ApplicationAdapter {
 
     public void drawBoard(){
         for (Blok obiekt:plansza.listaObiektow){
-            switch (obiekt.symbol){
+            switch (obiekt.getSymbol()){
                 case 'C':{
-                    batch.draw(cegly, 25*obiekt.getPolozenie().x, Stale.WYSOKOSC-25*obiekt.getPolozenie().y);
+                    batch.draw(cegly, (int)obiekt.getX(), Stale.WYSOKOSC*(int)obiekt.getY());
                     break;
                 }
                 case 'K':{
-                    batch.draw(kamien, 25*obiekt.getPolozenie().x, Stale.WYSOKOSC*obiekt.getPolozenie().y);
+                    batch.draw(kamien, (int)obiekt.getX(), Stale.WYSOKOSC*(int)obiekt.getY());
                     break;
                 }
                 case 'Z':{
-                    batch.draw(zarosla, 25*obiekt.getPolozenie().x, Stale.WYSOKOSC-25*obiekt.getPolozenie().y);
+                    batch.draw(zarosla, (int)obiekt.getX(), Stale.WYSOKOSC-25*(int)obiekt.getY());
                     break;
                 }
             }
@@ -85,30 +85,24 @@ public class TanksGame extends ApplicationAdapter {
     }
 
     public void update(){
-        int x = czolg.getPolozenieNaPlanszy().x;
-        int y = czolg.getPolozenieNaPlanszy().y;
+        int x = (int)czolg.getX();
+        int y = (int)czolg.getY();
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT)){
-                x--;
+                czolg.x--;
                 czolg.setKierunek(Kierunek.LEWO);
-                czolg.setTekstura(czolg_czer_L);
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
-                x++;
+                czolg.x++;
                 czolg.setKierunek(Kierunek.PRAWO);
-                czolg.setTekstura(czolg_czer_P);
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.UP)){
-                y++;
+                czolg.y++;
                 czolg.setKierunek(Kierunek.GORA);
-                czolg.setTekstura(czolg_czer_G);
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-                y--;
+                czolg.y--;
                 czolg.setKierunek(Kierunek.DOL);
-                czolg.setTekstura(czolg_czer_D);
             }
-
-        czolg.setPolozenieNaPlanszy(new Point(x,y));
     }
 
 	@Override
