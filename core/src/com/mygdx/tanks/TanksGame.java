@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import model.*;
+import java.util.Date;
 
 import static model.Kierunek.LEWO;
 
@@ -18,6 +19,9 @@ public class TanksGame extends ApplicationAdapter {
 	Texture  zarosla, cegly, kamien, pociskTexture;
     Czolg czolg = new Czolg(1,5, Stale.CZOLG_START_X*Stale.ROZMIAR_CZOLGU, Stale.CZOLG_START_Y*Stale.ROZMIAR_CZOLGU );
     Plansza plansza;
+    private Date date;
+    private long czasP;
+    private long czasK;
 
 	@Override
 	public void create () {
@@ -32,6 +36,8 @@ public class TanksGame extends ApplicationAdapter {
         cegly = new Texture("cegla.png");
         pociskTexture = new Texture("pocisk.png");
         czolg.setKierunek(LEWO);
+        this.date = new Date();
+
 	}
 
 	@Override
@@ -68,6 +74,8 @@ public class TanksGame extends ApplicationAdapter {
 		super.resume();
 	}
 
+    //private double getWspCzas(){return this.wspCzas;}
+
     private void drawBoard(){
         for (Blok obiekt:plansza.listaObiektow){
             switch (obiekt.getSymbol()){
@@ -88,7 +96,7 @@ public class TanksGame extends ApplicationAdapter {
     }
 
     private void drawMissiles(){
-        double fWsp = 100.5 * 1.0/60.0;
+        double fWsp = 100.5 * 1.0 / Gdx.graphics.getFramesPerSecond();
         //Podobna funkcja jak dla rysowania czołgu
         for (Pocisk pocisk:plansza.listaPociskow){
             batch.draw(new TextureRegion(pociskTexture),
@@ -146,6 +154,8 @@ public class TanksGame extends ApplicationAdapter {
     private void launchMissle(){
         int start_x = 0;
         int start_y = 0;
+        long czas = date.getTime();
+
         switch(czolg.getKierunek()){
             case LEWO:{
                 start_x = (int)(czolg.getX());
