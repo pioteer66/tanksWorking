@@ -103,7 +103,7 @@ public class TanksGame extends ApplicationAdapter {
 
             // szybka kolizja pociskow -- potem zastapi ja serwer
             if(obiekt.getSymbol() != 'Z') {
-                rect = new Rectangle((int) obiekt.getX(), (int) obiekt.getY() + 25, 25, 25);
+                rect = new Rectangle((int) obiekt.getX(), (int) obiekt.getY(), 25, 25);
                 for (int i = 0; i < this.plansza.listaPociskow.size(); i++) {
                     if (rect.contains(this.plansza.listaPociskow.get(i).getCenterX(), this.plansza.listaPociskow.get(i).getCenterY())) {
                         this.plansza.listaPociskow.remove(i);
