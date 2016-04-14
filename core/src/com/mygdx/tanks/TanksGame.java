@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import model.*;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.awt.Rectangle;
 import static model.Kierunek.LEWO;
@@ -85,6 +87,7 @@ public class TanksGame extends ApplicationAdapter {
 
     private void drawBoard(){
         Rectangle rect;
+        int j=0;
         for (Blok obiekt:plansza.listaObiektow){
             switch (obiekt.getSymbol()){
                 case 'C':{
@@ -107,9 +110,21 @@ public class TanksGame extends ApplicationAdapter {
                 for (int i = 0; i < this.plansza.listaPociskow.size(); i++) {
                     if (rect.contains(this.plansza.listaPociskow.get(i).getCenterX(), this.plansza.listaPociskow.get(i).getCenterY())) {
                         this.plansza.listaPociskow.remove(i);
+                        plansza.listaObiektow.get(j).setWytrzymalosc(plansza.listaObiektow.get(j).getWytrzymalosc() -1);
                     }
                 }
             }
+            j++;
+        }
+        ArrayList<Blok> temp = new ArrayList<Blok>();
+        for (Blok obiekt:plansza.listaObiektow){
+            if (obiekt.getWytrzymalosc() != 0){
+                temp.add(obiekt);
+            }
+        }
+        plansza.listaObiektow.clear();
+        for (Blok obiekt:temp){
+            plansza.listaObiektow.add(obiekt);
         }
     }
 
@@ -117,15 +132,15 @@ public class TanksGame extends ApplicationAdapter {
         double fWsp = this.predkoscPocisku *( 1.0 / Gdx.graphics.getFramesPerSecond()); // predkosc = jednoski / ramke
         //Podobna funkcja jak dla rysowania czołgu
         for (Pocisk pocisk:plansza.listaPociskow){
-            batch.draw(new TextureRegion(pociskTexture),
-                    (float) pocisk.getX(), (float) pocisk.getY(),
-                    (float) pocisk.getCenterX()-(float) pocisk.getX(), (float) pocisk.getCenterY()-(float) pocisk.getY(),
-                    (float) pocisk.getWidth(), (float) pocisk.getHeight(),
-                    1f, 1f,
-                    (float) pocisk.getKierunek().getValue()*90);
+                    batch.draw(new TextureRegion(pociskTexture),
+                            (float) pocisk.getX(), (float) pocisk.getY(),
+                            (float) pocisk.getCenterX()-(float) pocisk.getX(), (float) pocisk.getCenterY()-(float) pocisk.getY(),
+                            (float) pocisk.getWidth(), (float) pocisk.getHeight(),
+                            1f, 1f,
+                            (float) pocisk.getKierunek().getValue()*90);
 
-            switch ( pocisk.getKierunek()){
-                case LEWO: {
+                    switch ( pocisk.getKierunek()){
+                        case LEWO: {
                     pocisk.x -= fWsp;
                     break;
                 }
