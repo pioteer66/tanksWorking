@@ -10,9 +10,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import model.*;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Date;
-import java.awt.Rectangle;
+
 import static model.Direction.LEFT;
 
 public class TanksGame extends ApplicationAdapter {
@@ -62,7 +63,7 @@ public class TanksGame extends ApplicationAdapter {
                 (float) tank.getCenterX()-(float)x, (float) tank.getCenterY()-(float)y,
                 (float) tank.getWidth(), (float) tank.getHeight(), 1f, 1f, (float) tank.getDirection().getValue()*90);
         drawMissiles();
-        updateMissilesState();
+        removeRedundantMissiles();
         drawBoard();
         batch.end();
         this.date = new Date(); // aktualizuje czas
@@ -84,8 +85,34 @@ public class TanksGame extends ApplicationAdapter {
 		super.resume();
 	}
 
+    private void checkForCollisions(Block object, int j)
+    {
+        if(object.getSymbol() != 'Z') {
+            Rectangle rect = new Rectangle((int) object.getX(), (int) object.getY(), 25, 25);
+            for (int i = 0; i < this.board.missilesList.size(); i++) {
+                if (rect.contains(this.board.missilesList.get(i).getCenterX(), this.board.missilesList.get(i).getCenterY())) {
+                    this.board.missilesList.remove(i);
+                    board.objectsList.get(j).setStamina(board.objectsList.get(j).getStamina() -1);
+                }
+            }
+        }
+    }
+
+    private void updateBoardState()
+    {
+        ArrayList<Block> temp = new ArrayList<Block>();
+        for (Block object: board.objectsList){
+            if (object.getStamina() != 0){
+                temp.add(object);
+            }
+        }
+        board.objectsList.clear();
+        for (Block object:temp){
+            board.objectsList.add(object);
+        }
+    }
+
     private void drawBoard(){
-        Rectangle rect;
         int j=0;
         for (Block object: board.objectsList){
             switch (object.getSymbol()){
@@ -102,33 +129,37 @@ public class TanksGame extends ApplicationAdapter {
                     break;
                 }
             }
-
+            checkForCollisions(object, j);
             // szybka kolizja pociskow -- potem zastapi ja serwer
-            if(object.getSymbol() != 'Z') {
-                rect = new Rectangle((int) object.getX(), (int) object.getY(), 25, 25);
-                for (int i = 0; i < this.board.missilesList.size(); i++) {
-                    if (rect.contains(this.board.missilesList.get(i).getCenterX(), this.board.missilesList.get(i).getCenterY())) {
-                        this.board.missilesList.remove(i);
-                        board.objectsList.get(j).setStamina(board.objectsList.get(j).getStamina() -1);
-                    }
-                }
-            }
             j++;
         }
-        ArrayList<Block> temp = new ArrayList<Block>();
-        for (Block object: board.objectsList){
-            if (object.getStamina() != 0){
-                temp.add(object);
+        updateBoardState();
+    }
+
+    private void updateMissilePosition(Missile missile)
+    {
+        double missileStep = this.missileSpeed *( 1.0 / Gdx.graphics.getFramesPerSecond()); // predkosc = jednoski / ramke
+        switch ( missile.getDirection()){
+            case LEFT: {
+                missile.x -= missileStep;
+                break;
             }
-        }
-        board.objectsList.clear();
-        for (Block object:temp){
-            board.objectsList.add(object);
+            case RIGHT: {
+                missile.x += missileStep;
+                break;
+            }
+            case UP: {
+                missile.y += missileStep;
+                break;
+            }
+            case DOWN: {
+                missile.y -= missileStep;
+                break;
+            }
         }
     }
 
     private void drawMissiles(){
-        double missileStep = this.missileSpeed *( 1.0 / Gdx.graphics.getFramesPerSecond()); // predkosc = jednoski / ramke
         //Podobna funkcja jak dla rysowania czołgu
         for (Missile missile : board.missilesList){
                     batch.draw(new TextureRegion(missileTexture),
@@ -137,29 +168,11 @@ public class TanksGame extends ApplicationAdapter {
                             (float) missile.getWidth(), (float) missile.getHeight(),
                             1f, 1f,
                             (float) missile.getDirection().getValue()*90);
-
-                    switch ( missile.getDirection()){
-                        case LEFT: {
-                    missile.x -= missileStep;
-                    break;
-                }
-                case RIGHT: {
-                    missile.x += missileStep;
-                    break;
-                }
-                case UP: {
-                    missile.y += missileStep;
-                    break;
-                }
-                case DOWN: {
-                    missile.y -= missileStep;
-                    break;
-                }
-            }
+            updateMissilePosition(missile);
         }
     }
 
-    private void updateMissilesState(){
+    private void removeRedundantMissiles(){
         //Usuwanie pocisków po wylocie z planszy
         for (int i = 0; i< board.missilesList.size(); i++){
             Missile missile = board.missilesList.get(i);
@@ -183,37 +196,45 @@ public class TanksGame extends ApplicationAdapter {
             }
         }
     }
+
+    private Point getMissileStartingPosition()
+    {
+        Point start = new Point();
+        start.x = 0;
+        start.y = 0;
+        switch (tank.getDirection()) {
+            case LEFT: {
+                start.x = (int) (tank.getX());
+                start.y = (int) (tank.getY() + tank.height / 2 - 5);
+                break;
+            }
+            case RIGHT: {
+                start.x = (int) (tank.getX() + tank.width);
+                start.y = (int) (tank.getY() + tank.height / 2 - 5);
+                break;
+            }
+            case UP: {
+                start.x = (int) (tank.getX() + tank.width / 2 - 5);
+                start.y = (int) (tank.getY() + tank.height);
+                break;
+            }
+            case DOWN: {
+                start.x = (int) (tank.getX() + tank.width / 2 - 5);
+                start.y = (int) (tank.getY());
+                break;
+            }
+
+        }
+        return start;
+    }
+
     private void launchMissile(){
         if(this.timeStart >= timeEnd) { /* sprawdza czy upłyna rzadany czas przaładowania */
-            int start_x = 0;
-            int start_y = 0;
-            switch (tank.getDirection()) {
-                case LEFT: {
-                    start_x = (int) (tank.getX());
-                    start_y = (int) (tank.getY() + tank.height / 2 - 5);
-                    break;
-                }
-                case RIGHT: {
-                    start_x = (int) (tank.getX() + tank.width);
-                    start_y = (int) (tank.getY() + tank.height / 2 - 5);
-                    break;
-                }
-                case UP: {
-                    start_x = (int) (tank.getX() + tank.width / 2 - 5);
-                    start_y = (int) (tank.getY() + tank.height);
-                    break;
-                }
-                case DOWN: {
-                    start_x = (int) (tank.getX() + tank.width / 2 - 5);
-                    start_y = (int) (tank.getY());
-                    break;
-                }
-
-            }
+            Point start = getMissileStartingPosition();
             //start_x i start_y to początkowa pozycja pocisku
             Missile missile = new Missile(tank, tank.getDirection());
-            missile.x = start_x;
-            missile.y = start_y;
+            missile.x = start.x;
+            missile.y = start.x;
             board.missilesList.add(missile);
             timeEnd = this.date.getTime() + this.reloadTime;
         }
@@ -235,7 +256,6 @@ public class TanksGame extends ApplicationAdapter {
                     break;
                 }
             }
-
             if (isCollision) /*  //Jeśli wystąpiła kolizja z blokiem, to cofnij na pole sprzed zmiany */
             {
                 tank.x = x;
