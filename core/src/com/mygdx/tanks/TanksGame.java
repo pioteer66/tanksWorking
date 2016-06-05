@@ -13,41 +13,40 @@ import model.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.awt.Rectangle;
-import static model.Kierunek.LEWO;
+import static model.Direction.LEFT;
 
 public class TanksGame extends ApplicationAdapter {
 	SpriteBatch batch;
-	Texture czolg_ziel,czolg_czer, czolg_nieb, czolg_pom;
-	Texture  zarosla, cegly, kamien, pociskTexture;
-    Czolg czolg = new Czolg(1,5, Stale.CZOLG_START_X*Stale.ROZMIAR_CZOLGU, Stale.CZOLG_START_Y*Stale.ROZMIAR_CZOLGU );
-    Plansza plansza;
+	Texture greenTankTexture, redTankTexture, blueTankTexture, orangeTankTexture;
+	Texture shrubTexture, brickTexture, stoneTexture, missileTexture;
+    Tank tank = new Tank(1,5, Constants.TANK_START_X * Constants.TANK_SIZE, Constants.TANK_START_Y * Constants.TANK_SIZE);
+    Board board;
 
-    /* Zmienne do przeładowywania działa */
     private Date date;
-    private long czasP;
-    private long czasK;
-    private long przeladowanieDziala; //milisekundy
-    private double predkoscPocisku;     // jednostki odswiezen
+    private long timeStart;
+    private long timeEnd;
+    private long reloadTime; //milisekundy
+    private double missileSpeed;     // jednostki odswiezen
 
 	@Override
 	public void create () {
-        plansza = new Plansza("plansza.txt");
+        board = new Board("plansza.txt");
         batch = new SpriteBatch();
-        kamien= new Texture("niezniszczalny.png");
-        czolg_czer = new Texture("czerwonyCzolg.png");
-        czolg_nieb = new Texture("niebieskiCzolg.png");
-        czolg_pom = new Texture("zoltyCzolg.png");
-        czolg_ziel = new Texture("zielonyCzolg.png");
-        zarosla = new Texture("krzak.png");
-        cegly = new Texture("cegla.png");
-        pociskTexture = new Texture("pocisk.png");
-        czolg.setKierunek(LEWO);
+        stoneTexture = new Texture("niezniszczalny.png");
+        redTankTexture = new Texture("czerwonyCzolg.png");
+        blueTankTexture = new Texture("niebieskiCzolg.png");
+        orangeTankTexture = new Texture("zoltyCzolg.png");
+        greenTankTexture = new Texture("zielonyCzolg.png");
+        shrubTexture = new Texture("krzak.png");
+        brickTexture = new Texture("cegla.png");
+        missileTexture = new Texture("pocisk.png");
+        tank.setDirection(LEFT);
 
         this.date = new Date();
-        this.czasP = date.getTime();
-        this.czasK = date.getTime();
-        this.przeladowanieDziala = 800; //ms
-        this.predkoscPocisku = 200.0; // jednostek
+        this.timeStart = date.getTime();
+        this.timeEnd = date.getTime();
+        this.reloadTime = 500; //ms
+        this.missileSpeed = 600.0; // jednostek
 	}
 
 	@Override
@@ -56,12 +55,12 @@ public class TanksGame extends ApplicationAdapter {
         Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        batch.draw(cegly, 775,775);
-        double x = czolg.getX();
-        double y = czolg.getY();
-        batch.draw(new TextureRegion(czolg_czer), (float)x, (float)y,
-                (float)czolg.getCenterX()-(float)x, (float)czolg.getCenterY()-(float)y,
-                (float)czolg.getWidth(), (float)czolg.getHeight(), 1f, 1f, (float)czolg.getKierunek().getValue()*90);
+        batch.draw(brickTexture, 775,775);
+        double x = tank.getX();
+        double y = tank.getY();
+        batch.draw(new TextureRegion(redTankTexture), (float)x, (float)y,
+                (float) tank.getCenterX()-(float)x, (float) tank.getCenterY()-(float)y,
+                (float) tank.getWidth(), (float) tank.getHeight(), 1f, 1f, (float) tank.getDirection().getValue()*90);
         drawMissiles();
         updateMissilesState();
         drawBoard();
@@ -88,72 +87,72 @@ public class TanksGame extends ApplicationAdapter {
     private void drawBoard(){
         Rectangle rect;
         int j=0;
-        for (Blok obiekt:plansza.listaObiektow){
-            switch (obiekt.getSymbol()){
+        for (Block object: board.objectsList){
+            switch (object.getSymbol()){
                 case 'C':{
-                    batch.draw(cegly, (int)obiekt.getX(), (int)obiekt.getY());
+                    batch.draw(brickTexture, (int)object.getX(), (int)object.getY());
                     break;
                 }
                 case 'K':{
-                    batch.draw(kamien, (int)obiekt.getX(), (int)obiekt.getY());
+                    batch.draw(stoneTexture, (int)object.getX(), (int)object.getY());
                     break;
                 }
                 case 'Z':{
-                    batch.draw(zarosla, (int)obiekt.getX(), (int)obiekt.getY());
+                    batch.draw(shrubTexture, (int)object.getX(), (int)object.getY());
                     break;
                 }
             }
 
             // szybka kolizja pociskow -- potem zastapi ja serwer
-            if(obiekt.getSymbol() != 'Z') {
-                rect = new Rectangle((int) obiekt.getX(), (int) obiekt.getY(), 25, 25);
-                for (int i = 0; i < this.plansza.listaPociskow.size(); i++) {
-                    if (rect.contains(this.plansza.listaPociskow.get(i).getCenterX(), this.plansza.listaPociskow.get(i).getCenterY())) {
-                        this.plansza.listaPociskow.remove(i);
-                        plansza.listaObiektow.get(j).setWytrzymalosc(plansza.listaObiektow.get(j).getWytrzymalosc() -1);
+            if(object.getSymbol() != 'Z') {
+                rect = new Rectangle((int) object.getX(), (int) object.getY(), 25, 25);
+                for (int i = 0; i < this.board.missilesList.size(); i++) {
+                    if (rect.contains(this.board.missilesList.get(i).getCenterX(), this.board.missilesList.get(i).getCenterY())) {
+                        this.board.missilesList.remove(i);
+                        board.objectsList.get(j).setStamina(board.objectsList.get(j).getStamina() -1);
                     }
                 }
             }
             j++;
         }
-        ArrayList<Blok> temp = new ArrayList<Blok>();
-        for (Blok obiekt:plansza.listaObiektow){
-            if (obiekt.getWytrzymalosc() != 0){
-                temp.add(obiekt);
+        ArrayList<Block> temp = new ArrayList<Block>();
+        for (Block object: board.objectsList){
+            if (object.getStamina() != 0){
+                temp.add(object);
             }
         }
-        plansza.listaObiektow.clear();
-        for (Blok obiekt:temp){
-            plansza.listaObiektow.add(obiekt);
+        board.objectsList.clear();
+        for (Block object:temp){
+            board.objectsList.add(object);
         }
     }
 
     private void drawMissiles(){
-        double fWsp = this.predkoscPocisku *( 1.0 / Gdx.graphics.getFramesPerSecond()); // predkosc = jednoski / ramke
+        double missileStep = this.missileSpeed *( 1.0 / Gdx.graphics.getFramesPerSecond()); // predkosc = jednoski / ramke
         //Podobna funkcja jak dla rysowania czołgu
-        for (Pocisk pocisk:plansza.listaPociskow){
-                    batch.draw(new TextureRegion(pociskTexture),
-                            (float) pocisk.getX(), (float) pocisk.getY(),
-                            (float) pocisk.getCenterX()-(float) pocisk.getX(), (float) pocisk.getCenterY()-(float) pocisk.getY(),
-                            (float) pocisk.getWidth(), (float) pocisk.getHeight(),
+        for (Missile missile : board.missilesList){
+                    batch.draw(new TextureRegion(missileTexture),
+                            (float) missile.getX(), (float) missile.getY(),
+                            (float) missile.getCenterX()-(float) missile.getX(), (float) missile.getCenterY()-(float) missile.getY(),
+                            (float) missile.getWidth(), (float) missile.getHeight(),
                             1f, 1f,
-                            (float) pocisk.getKierunek().getValue()*90);
+                            (float) missile.getDirection().getValue()*90);
 
-                    switch ( pocisk.getKierunek()){
-                        case LEWO: {
-                    pocisk.x -= fWsp;
+                    switch ( missile.getDirection()){
+                        case LEFT: {
+                    missile.x -= missileStep;
                     break;
                 }
-                case PRAWO: {
-                    pocisk.x += fWsp;
+                case RIGHT: {
+                    missile.x += missileStep;
                     break;
                 }
-                case GORA: {
-                    pocisk.y += fWsp;
+                case UP: {
+                    missile.y += missileStep;
                     break;
                 }
-                case DOL: {
-                    pocisk.y -= fWsp;
+                case DOWN: {
+                    missile.y -= missileStep;
                     break;
                 }
             }
@@ -162,111 +161,111 @@ public class TanksGame extends ApplicationAdapter {
 
     private void updateMissilesState(){
         //Usuwanie pocisków po wylocie z planszy
-        for (int i=0; i<plansza.listaPociskow.size(); i++){
-            Pocisk pocisk = plansza.listaPociskow.get(i);
-            switch(pocisk.getKierunek()){
-                case LEWO: {
-                    if (pocisk.getX() <= 0) plansza.listaPociskow.remove(i);
+        for (int i = 0; i< board.missilesList.size(); i++){
+            Missile missile = board.missilesList.get(i);
+            switch(missile.getDirection()){
+                case LEFT: {
+                    if (missile.getX() <= 0) board.missilesList.remove(i);
                     break;
                 }
-                case PRAWO: {
-                    if (pocisk.getX() >= Stale.SZEROKOSC) plansza.listaPociskow.remove(i);
+                case RIGHT: {
+                    if (missile.getX() >= Constants.WIDTH) board.missilesList.remove(i);
                     break;
                 }
-                case GORA: {
-                    if (pocisk.getY() >= Stale.WYSOKOSC) plansza.listaPociskow.remove(i);
+                case UP: {
+                    if (missile.getY() >= Constants.HEIGHT) board.missilesList.remove(i);
                     break;
                 }
-                case DOL: {
-                    if (pocisk.getY() <= 0) plansza.listaPociskow.remove(i);
+                case DOWN: {
+                    if (missile.getY() <= 0) board.missilesList.remove(i);
                     break;
                 }
             }
         }
     }
     private void launchMissile(){
-        if(this.czasP >= czasK) { /* sprawdza czy upłyna rzadany czas przaładowania */
+        if(this.timeStart >= timeEnd) { /* sprawdza czy upłyna rzadany czas przaładowania */
             int start_x = 0;
             int start_y = 0;
-            switch (czolg.getKierunek()) {
-                case LEWO: {
-                    start_x = (int) (czolg.getX());
-                    start_y = (int) (czolg.getY() + czolg.height / 2 - 5);
+            switch (tank.getDirection()) {
+                case LEFT: {
+                    start_x = (int) (tank.getX());
+                    start_y = (int) (tank.getY() + tank.height / 2 - 5);
                     break;
                 }
-                case PRAWO: {
-                    start_x = (int) (czolg.getX() + czolg.width);
-                    start_y = (int) (czolg.getY() + czolg.height / 2 - 5);
+                case RIGHT: {
+                    start_x = (int) (tank.getX() + tank.width);
+                    start_y = (int) (tank.getY() + tank.height / 2 - 5);
                     break;
                 }
-                case GORA: {
-                    start_x = (int) (czolg.getX() + czolg.width / 2 - 5);
-                    start_y = (int) (czolg.getY() + czolg.height);
+                case UP: {
+                    start_x = (int) (tank.getX() + tank.width / 2 - 5);
+                    start_y = (int) (tank.getY() + tank.height);
                     break;
                 }
-                case DOL: {
-                    start_x = (int) (czolg.getX() + czolg.width / 2 - 5);
-                    start_y = (int) (czolg.getY());
+                case DOWN: {
+                    start_x = (int) (tank.getX() + tank.width / 2 - 5);
+                    start_y = (int) (tank.getY());
                     break;
                 }
 
             }
             //start_x i start_y to początkowa pozycja pocisku
-            Pocisk pocisk = new Pocisk(czolg, czolg.getKierunek());
-            pocisk.x = start_x;
-            pocisk.y = start_y;
-            plansza.listaPociskow.add(pocisk);
-            czasK = this.date.getTime() + this.przeladowanieDziala;
+            Missile missile = new Missile(tank, tank.getDirection());
+            missile.x = start_x;
+            missile.y = start_y;
+            board.missilesList.add(missile);
+            timeEnd = this.date.getTime() + this.reloadTime;
         }
     }
     private void collisionDetector(int x, int y){
         //uniemożliwienie wyjechania poza planszę
-        if (czolg.getX() >= Stale.SZEROKOSC-Stale.ROZMIAR_CZOLGU || czolg.getX() <=0 ||
-            czolg.getY() <= 0 || czolg.getY() >= Stale.WYSOKOSC-Stale.ROZMIAR_CZOLGU)
+        if (tank.getX() >= Constants.WIDTH - Constants.TANK_SIZE || tank.getX() <=0 ||
+            tank.getY() <= 0 || tank.getY() >= Constants.HEIGHT - Constants.TANK_SIZE)
         {
-            czolg.x = x;
-            czolg.y = y;
+            tank.x = x;
+            tank.y = y;
         } else { /* //sprawdzenie kolizji, czyli dzięki temu czołg nie wjeżdża na bloki (chyba, że to zarośla) */
-            boolean jest_kolizja = false;
-            for (Blok obiekt : plansza.listaObiektow)
+            boolean isCollision = false;
+            for (Block object : board.objectsList)
             {
-                if (obiekt.intersection(czolg).width >2 && obiekt.intersection(czolg).height >2 && obiekt.getSymbol() != 'Z')
+                if (object.intersection(tank).width >2 && object.intersection(tank).height >2 && object.getSymbol() != 'Z')
                 {
-                    jest_kolizja = true;
+                    isCollision = true;
                     break;
                 }
             }
 
-            if (jest_kolizja) /*  //Jeśli wystąpiła kolizja z blokiem, to cofnij na pole sprzed zmiany */
+            if (isCollision) /*  //Jeśli wystąpiła kolizja z blokiem, to cofnij na pole sprzed zmiany */
             {
-                czolg.x = x;
-                czolg.y = y;
+                tank.x = x;
+                tank.y = y;
             }
         }
     }
 
     private void update(){
-        this.czasP = date.getTime();
-        int x = (int)czolg.getX();
-        int y = (int)czolg.getY();
+        this.timeStart = date.getTime();
+        int x = (int) tank.getX();
+        int y = (int) tank.getY();
         //Odczyt klawiszy
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT)){
-                czolg.x-=Stale.PREDKOSC_CZOLGU ;
-                czolg.setKierunek(LEWO);
+                tank.x-= Constants.TANK_SPEED;
+                tank.setDirection(LEFT);
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
-                czolg.x+=Stale.PREDKOSC_CZOLGU;
-                czolg.setKierunek(Kierunek.PRAWO);
+                tank.x+= Constants.TANK_SPEED;
+                tank.setDirection(Direction.RIGHT);
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.UP)){
-                czolg.y+=Stale.PREDKOSC_CZOLGU;
-                czolg.setKierunek(Kierunek.GORA);
+                tank.y+= Constants.TANK_SPEED;
+                tank.setDirection(Direction.UP);
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-                czolg.y-=Stale.PREDKOSC_CZOLGU;
-                czolg.setKierunek(Kierunek.DOL);
+                tank.y-= Constants.TANK_SPEED;
+                tank.setDirection(Direction.DOWN);
             }
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
+            else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
                 this.launchMissile();
             }
         collisionDetector(x,y);
@@ -276,14 +275,14 @@ public class TanksGame extends ApplicationAdapter {
 	@Override
 	public void dispose() {
 		batch.dispose();
-		kamien.dispose();
-		czolg_czer.dispose();
-		czolg_nieb.dispose();
-		czolg_pom.dispose();
-		czolg_ziel.dispose();
-		zarosla.dispose();
-        pociskTexture.dispose();
-		cegly.dispose();
+		stoneTexture.dispose();
+		redTankTexture.dispose();
+		blueTankTexture.dispose();
+		orangeTankTexture.dispose();
+		greenTankTexture.dispose();
+		shrubTexture.dispose();
+        missileTexture.dispose();
+		brickTexture.dispose();
 	}
 
 	public TanksGame() {
