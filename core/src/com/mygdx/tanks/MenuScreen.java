@@ -50,6 +50,7 @@ public class MenuScreen implements Screen {
         textButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                game.setIP(textField.getText());
                 game.nextScreen();
             }
         });
@@ -60,9 +61,6 @@ public class MenuScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         //Sprite sprite= new Sprite(new Texture("czerwonyCzolg.png"));
-
-
-
         /*
         batch=new SpriteBatch();
         stage=new Stage();
