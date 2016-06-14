@@ -19,6 +19,7 @@ public class DesktopLauncher {
 		SocketWorker sw = new SocketWorker(socket,packetMagazine);
 		new Thread(sw).start();
 
+
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.width = 800;
 		config.height= 800;
