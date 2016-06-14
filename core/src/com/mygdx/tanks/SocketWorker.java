@@ -1,9 +1,12 @@
 package com.mygdx.tanks;
 
+import model.*;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.ArrayList;
 
 /**
  * Created by Kornel on 2016-06-14.
@@ -61,6 +64,14 @@ public class SocketWorker implements Runnable {
             System.out.println(message);
             String message1 = ((String) ois.readObject());
             System.out.println(message1);
+
+            ArrayList<ArrayList<? extends Packet>>  returnedPacket = (ArrayList<ArrayList<? extends Packet>>) ois.readObject();;
+
+            ArrayList<PositionPacket> positionPackets = (ArrayList<PositionPacket>) returnedPacket.get(0);
+            ArrayList<MissilePacket> missilePackets = (ArrayList<MissilePacket> ) returnedPacket.get(0);
+            ArrayList<HitsPacket> hitsPackets = (ArrayList<HitsPacket>) returnedPacket.get(0);
+            ArrayList<PlayerStatisticsPacket> statisticsPackets = ( ArrayList<PlayerStatisticsPacket> )  returnedPacket.get(0);
+            //this.packetMagazine.
 
         } catch (Exception ex) {
             ex.printStackTrace();
