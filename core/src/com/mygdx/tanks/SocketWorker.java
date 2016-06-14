@@ -23,10 +23,8 @@ public class SocketWorker implements Runnable {
 
     public void run() {
         try {
-            InputStream inputStream = this.socket.getInputStream();
-            OutputStream outputStream = this.socket.getOutputStream();
-            ObjectInputStream dis = new ObjectInputStream(inputStream);
-            ObjectOutputStream dos = new ObjectOutputStream(outputStream);
+            ObjectInputStream dis = new ObjectInputStream(this.socket.getInputStream());
+            ObjectOutputStream dos = new ObjectOutputStream(this.socket.getOutputStream());
             SocketAddress sockaddr = this.socket.getRemoteSocketAddress();
 
             System.out.println("Nawiązano połaczenie z: " + sockaddr.toString());
@@ -35,10 +33,6 @@ public class SocketWorker implements Runnable {
 
             dos.close();
             dis.close();
-            inputStream.close();
-            outputStream.close();
-
-
         } catch (Exception ex) {
             System.out.println(ex);
         }
