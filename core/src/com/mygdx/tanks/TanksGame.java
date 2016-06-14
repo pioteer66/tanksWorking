@@ -16,6 +16,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 
 import static model.Direction.LEFT;
@@ -37,6 +38,7 @@ public class TanksGame extends ApplicationAdapter {
     private Socket connectionSocket;
     private int playerId = -1;
     private PacketMagazine packetMagazine;
+    //ios.readBytes(Base64.getDecoder().decode(input));
 
 	@Override
 	public void create () {

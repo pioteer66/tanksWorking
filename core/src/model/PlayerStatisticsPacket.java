@@ -1,9 +1,11 @@
 package model;
 
+import java.io.Serializable;
+
 /**
  * Created by Piotr Ługowski on 14.06.2016.
  */
-public class PlayerStatisticsPacket extends Packet {
+public class PlayerStatisticsPacket extends Packet implements Serializable {
     private int playerId;
     private int points;
     private int remainingLives;
@@ -30,5 +32,10 @@ public class PlayerStatisticsPacket extends Packet {
 
     public void setRemainingLives(int remainingLives) {
         this.remainingLives = remainingLives;
+    }
+
+    @Override
+    public void parsePacket(byte[] buffer, int bytesCount) {
+
     }
 }
