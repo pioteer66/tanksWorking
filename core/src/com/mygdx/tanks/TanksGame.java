@@ -17,7 +17,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
 
 import static model.Direction.LEFT;
@@ -56,17 +55,7 @@ public class TanksGame extends ApplicationAdapter {
         shrubTexture = new Texture("krzak.png");
         brickTexture = new Texture("cegla.png");
         missileTexture = new Texture("pocisk.png");
-        try {
-            connectionSocket = new Socket(InetAddress.getByName("localhost"), Constants.SERVER_PORT);
-            System.out.println("Połaczono z serwerem: "
-                    + connectionSocket.getRemoteSocketAddress());
-            outToServer  = connectionSocket.getOutputStream();
-            inputStream = connectionSocket.getInputStream();
-            oos = new ObjectOutputStream(outToServer);
-            ois = new ObjectInputStream(inputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
         /*try{
             connectionSocket = new Socket(InetAddress.getByName("localhost"), Constants.SERVER_PORT);
             System.out.println("Połaczono z serwerem: "
@@ -80,7 +69,6 @@ public class TanksGame extends ApplicationAdapter {
         catch (IOException ex){
             System.out.println("Problem with IO operation");
         }*/
-        processServerResponse();
 
         tank.setDirection(LEFT);
         this.date = new Date();
@@ -124,38 +112,6 @@ public class TanksGame extends ApplicationAdapter {
 	public void resume() {
 		super.resume();
 	}
-
-
-    private void processServerResponse()
-    {
-        try{
-            try{
-                playerId = ((Integer) ois.readObject()).intValue();
-                char[][] charPlansza = (char[][]) ois.readObject();
-                int lives = ((Integer) ois.readObject()).intValue();
-                String message = ((String) ois.readObject());
-                System.out.println(playerId);
-                for (int i=0; i<32; i++)
-                {
-                    for (int j=0; j<32; j++)
-                        System.out.print(charPlansza[i][j]+" ");
-                    System.out.println();
-                }
-                System.out.println(lives);
-                System.out.println(message);
-                String message1 = ((String) ois.readObject());
-                System.out.println(message1);
-
-            }
-            catch (ClassNotFoundException ex){
-                ex.printStackTrace();
-            }
-
-        }catch (IOException ex){
-            System.out.println("Problem ze strumieniem wejściowym");
-        }
-
-    }
 
     private void checkForCollisions(Block object, int j)
     {
