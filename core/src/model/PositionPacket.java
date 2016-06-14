@@ -2,13 +2,16 @@ package model;
 
 import java.io.Serializable;
 
-/**
- * Created by Piotr Ługowski on 14.06.2016.
- */
 public class PositionPacket extends Packet implements Serializable {
     private int Id;
     private double positionX;
     private double positionY;
+
+    public PositionPacket(int id, double positionX, double positionY) {
+        Id = id;
+        this.positionX = positionX;
+        this.positionY = positionY;
+    }
 
     @Override
     public void parsePacket(byte[] buffer, int bytesCount) {

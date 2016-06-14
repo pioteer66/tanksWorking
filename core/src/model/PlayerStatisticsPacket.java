@@ -2,13 +2,16 @@ package model;
 
 import java.io.Serializable;
 
-/**
- * Created by Piotr Ługowski on 14.06.2016.
- */
 public class PlayerStatisticsPacket extends Packet implements Serializable {
     private int playerId;
     private int points;
     private int remainingLives;
+
+    public PlayerStatisticsPacket(int playerId, int points, int remainingLives) {
+        this.playerId = playerId;
+        this.points = points;
+        this.remainingLives = remainingLives;
+    }
 
     public int getPlayerId() {
         return playerId;

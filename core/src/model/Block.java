@@ -1,8 +1,6 @@
 package model;
 
-
 import java.awt.*;
-
 
 public class Block extends Rectangle{
     protected int stamina;
