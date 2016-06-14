@@ -11,6 +11,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import model.*;
 
 import java.awt.*;
+import java.io.*;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -22,12 +26,16 @@ public class TanksGame extends ApplicationAdapter {
 	Texture shrubTexture, brickTexture, stoneTexture, missileTexture;
     Tank tank = new Tank(1,5, Constants.TANK_START_X * Constants.TANK_SIZE, Constants.TANK_START_Y * Constants.TANK_SIZE);
     Board board;
+    OutputStream outToServer;
+    DataOutputStream out;
 
     private Date date;
     private long timeStart;
     private long timeEnd;
     private long reloadTime; //milisekundy
     private double missileSpeed;     // jednostki odswiezen
+    private Socket connectionSocket;
+    private int playerId = -1;
 
 	@Override
 	public void create () {
@@ -41,8 +49,22 @@ public class TanksGame extends ApplicationAdapter {
         shrubTexture = new Texture("krzak.png");
         brickTexture = new Texture("cegla.png");
         missileTexture = new Texture("pocisk.png");
-        tank.setDirection(LEFT);
+        /*try{
+            connectionSocket = new Socket(InetAddress.getByName("localhost"), Constants.SERVER_PORT);
+            System.out.println("Połaczono z serwerem: "
+                    + connectionSocket.getRemoteSocketAddress());
+            outToServer  = connectionSocket.getOutputStream();
+            out = new DataOutputStream(outToServer);
+        }
+        catch (UnknownHostException ex){
+            System.out.println("Unknown host!");
+        }
+        catch (IOException ex){
+            System.out.println("Problem with IO operation");
+        }*/
+        processServerResponse();
 
+        tank.setDirection(LEFT);
         this.date = new Date();
         this.timeStart = date.getTime();
         this.timeEnd = date.getTime();
@@ -84,6 +106,20 @@ public class TanksGame extends ApplicationAdapter {
 	public void resume() {
 		super.resume();
 	}
+
+
+    private void processServerResponse()
+    {
+        /*try{
+            InputStream inFromServer = connectionSocket.getInputStream();
+            DataInputStream in =
+                    new DataInputStream(inFromServer);
+            playerId = Integer.parseInt(in.readUTF());
+        }catch (IOException ex){
+            System.out.println("Problem ze strumieniem wejściowym");
+        }
+*/
+    }
 
     private void checkForCollisions(Block object, int j)
     {
@@ -234,7 +270,7 @@ public class TanksGame extends ApplicationAdapter {
             //start_x i start_y to początkowa pozycja pocisku
             Missile missile = new Missile(tank, tank.getDirection());
             missile.x = start.x;
-            missile.y = start.x;
+            missile.y = start.y;
             board.missilesList.add(missile);
             timeEnd = this.date.getTime() + this.reloadTime;
         }
@@ -268,27 +304,32 @@ public class TanksGame extends ApplicationAdapter {
         this.timeStart = date.getTime();
         int x = (int) tank.getX();
         int y = (int) tank.getY();
-        //Odczyt klawiszy
-            if (Gdx.input.isKeyPressed(Input.Keys.LEFT)){
-                tank.x-= Constants.TANK_SPEED;
+            //Odczyt klawiszy
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+                tank.x -= Constants.TANK_SPEED;
+                //out.writeBytes(playerId + "," + Direction.LEFT);
                 tank.setDirection(LEFT);
-            }
-            else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
-                tank.x+= Constants.TANK_SPEED;
+            } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                tank.x += Constants.TANK_SPEED;
                 tank.setDirection(Direction.RIGHT);
-            }
-            else if (Gdx.input.isKeyPressed(Input.Keys.UP)){
-                tank.y+= Constants.TANK_SPEED;
+                //out.writeBytes(playerId + "," + Direction.LEFT);
+            } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+                tank.y += Constants.TANK_SPEED;
                 tank.setDirection(Direction.UP);
-            }
-            else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-                tank.y-= Constants.TANK_SPEED;
+                //out.writeBytes(playerId + "," + Direction.LEFT);
+            } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+                tank.y -= Constants.TANK_SPEED;
                 tank.setDirection(Direction.DOWN);
-            }
-            else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
+                //out.writeBytes(playerId + "," + Direction.LEFT);
+            } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
                 this.launchMissile();
+                //out.writeBytes(playerId + "," + "");
             }
-        collisionDetector(x,y);
+            collisionDetector(x, y);
+        /*catch (IOException ex){
+            System.out.println("Problem ze strumieniem wyjściowym");
+        }*/
+
     }
 
 

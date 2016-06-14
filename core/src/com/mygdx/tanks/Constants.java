@@ -8,4 +8,5 @@ public class Constants {
     public static final int TANK_SIZE = 50;
     public static final int BLOCK_SIZE = 25;
     public static final int TANK_SPEED = 2;
+    public static final int SERVER_PORT = 8088;
 }
