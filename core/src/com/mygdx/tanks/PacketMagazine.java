@@ -5,9 +5,6 @@ import model.Packet;
 import java.util.ArrayList;
 import java.util.Queue;
 
-/**
- * Created by Piotr Ługowski on 14.06.2016.
- */
 public class PacketMagazine implements Runnable{
     private Queue<Packet> packetsQueue;
 

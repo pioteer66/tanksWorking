@@ -5,11 +5,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 
-/**
- * Created by Kornel on 2016-06-14.
- */
-
-
 // nadal nie ruszać robie jeszcze a ja nie
 public class SocketWorker implements Runnable {
     private Socket socket;

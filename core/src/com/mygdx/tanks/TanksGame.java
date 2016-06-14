@@ -5,9 +5,6 @@ import com.badlogic.gdx.Screen;
 
 import java.util.ArrayList;
 
-/**
- * Created by Dawid on 2016-06-14.
- */
 public class TanksGame extends Game {
     private ArrayList<Screen> screenList;
     private int currentScreen;
