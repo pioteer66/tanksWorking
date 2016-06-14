@@ -42,10 +42,12 @@ public class GameScreen implements Screen {
     private Socket connectionSocket;
     private int playerId = -1;
     private PacketMagazine packetMagazine;
+    private boolean pierwszy = true; // czy gra renderowana jest pierwszy raz
 
 
     public GameScreen(Game game, PacketMagazine packetMagazine){
         this.game=game;
+
         this.board = new Board("plansza.txt");
         this.batch= new SpriteBatch();
         this.spriteMap=this.loadTextures();
@@ -89,7 +91,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-
         update();
         Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -102,6 +103,19 @@ public class GameScreen implements Screen {
                 (float) tank.getWidth(), (float) tank.getHeight(), 1f, 1f, (float) tank.getDirection().getValue()*90);
         drawMissiles();
         removeRedundantMissiles();
+
+        while(pierwszy == true){
+            try {
+                Thread.sleep(25);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if(this.packetMagazine.checkMap()){
+                this.board.newBoard(this.packetMagazine.getMap());
+                pierwszy = false;
+                break;
+            }
+        }
         drawBoard();
         batch.end();
         this.date = new Date(); // aktualizuje czas

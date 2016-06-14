@@ -42,4 +42,27 @@ public class Board {
 
     }
 
+    public void newBoard(char[][] map){
+        this.objectsList.clear();
+        for (int i = 0; i < 32; i++) {
+            for (int j = 0; j < 32; j++) {
+                char sign = map[i][j];
+                switch (sign) {
+                    case 'C': {
+                        this.objectsList.add(new Brick(j*25, Constants.HEIGHT -(i+1)*25));
+                        break;
+                    }
+                    case 'K': {
+                        this.objectsList.add(new Stone(j*25, Constants.HEIGHT -(i+1)*25));
+                        break;
+                    }
+                    case 'Z': {
+                        this.objectsList.add(new Shrub(j*25, Constants.HEIGHT -(i+1)*25));
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
 }

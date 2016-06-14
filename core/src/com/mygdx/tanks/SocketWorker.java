@@ -52,6 +52,9 @@ public class SocketWorker implements Runnable {
         try {
             int playerId = ((Integer) ois.readObject()).intValue();
             char[][] charPlansza = (char[][]) ois.readObject();
+            this.packetMagazine.setMap(charPlansza);
+
+
             int lives = ((Integer) ois.readObject()).intValue();
             String message = ((String) ois.readObject());
             System.out.println(playerId);
@@ -68,7 +71,6 @@ public class SocketWorker implements Runnable {
             while (true) {
                 ArrayList<ArrayList<? extends Packet>> returnedPacket = (ArrayList<ArrayList<? extends Packet>>) ois.readObject();
 
-
                 ArrayList<PositionPacket> positionPackets = (ArrayList<PositionPacket>) returnedPacket.get(0);
                 ArrayList<MissilePacket> missilePackets = (ArrayList<MissilePacket>) returnedPacket.get(1);
                 ArrayList<HitsPacket> hitsPackets = (ArrayList<HitsPacket>) returnedPacket.get(2);
@@ -78,6 +80,7 @@ public class SocketWorker implements Runnable {
                 this.packetMagazine.addMissile(missilePackets);
                 this.packetMagazine.addHits(hitsPackets);
                 this.packetMagazine.addStatistic(statisticsPackets);
+
             }
         } catch (Exception ex) {
             ex.printStackTrace();

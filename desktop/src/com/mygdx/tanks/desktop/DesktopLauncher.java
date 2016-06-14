@@ -10,15 +10,12 @@ import java.net.Socket;
 
 
 public class DesktopLauncher {
-	public static final int PORT = 8088;
 	public static final String ip = "localhost";
 	private static final PacketMagazine packetMagazine = new PacketMagazine();
 
 	public static void main (String[] arg) {
 		try {
-		Socket socket = new Socket(ip, PORT);
-		SocketWorker sw = new SocketWorker(socket,packetMagazine);
-		new Thread(sw).start();
+
 
 			// trzeba jeszcze zamykać socket ale  nie wiem gdzie , na razie
 		} catch (Exception ex){
