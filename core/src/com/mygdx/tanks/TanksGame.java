@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.sun.org.apache.xpath.internal.SourceTree;
 import model.*;
 
 import java.awt.*;
@@ -28,7 +29,10 @@ public class TanksGame extends ApplicationAdapter {
     Tank tank = new Tank(1,5, Constants.TANK_START_X * Constants.TANK_SIZE, Constants.TANK_START_Y * Constants.TANK_SIZE);
     Board board;
     OutputStream outToServer;
+    InputStream inputStream;
     DataOutputStream out;
+    ObjectOutputStream oos;
+    ObjectInputStream ois;
 
     private Date date;
     private long timeStart;
@@ -52,6 +56,17 @@ public class TanksGame extends ApplicationAdapter {
         shrubTexture = new Texture("krzak.png");
         brickTexture = new Texture("cegla.png");
         missileTexture = new Texture("pocisk.png");
+        try {
+            connectionSocket = new Socket(InetAddress.getByName("localhost"), Constants.SERVER_PORT);
+            System.out.println("Połaczono z serwerem: "
+                    + connectionSocket.getRemoteSocketAddress());
+            outToServer  = connectionSocket.getOutputStream();
+            inputStream = connectionSocket.getInputStream();
+            oos = new ObjectOutputStream(outToServer);
+            ois = new ObjectInputStream(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         /*try{
             connectionSocket = new Socket(InetAddress.getByName("localhost"), Constants.SERVER_PORT);
             System.out.println("Połaczono z serwerem: "
@@ -113,15 +128,33 @@ public class TanksGame extends ApplicationAdapter {
 
     private void processServerResponse()
     {
-        /*try{
-            InputStream inFromServer = connectionSocket.getInputStream();
-            DataInputStream in =
-                    new DataInputStream(inFromServer);
-            playerId = Integer.parseInt(in.readUTF());
+        try{
+            try{
+                playerId = ((Integer) ois.readObject()).intValue();
+                char[][] charPlansza = (char[][]) ois.readObject();
+                int lives = ((Integer) ois.readObject()).intValue();
+                String message = ((String) ois.readObject());
+                System.out.println(playerId);
+                for (int i=0; i<32; i++)
+                {
+                    for (int j=0; j<32; j++)
+                        System.out.print(charPlansza[i][j]+" ");
+                    System.out.println();
+                }
+                System.out.println(lives);
+                System.out.println(message);
+                String message1 = ((String) ois.readObject());
+                System.out.println(message1);
+
+            }
+            catch (ClassNotFoundException ex){
+                ex.printStackTrace();
+            }
+
         }catch (IOException ex){
             System.out.println("Problem ze strumieniem wejściowym");
         }
-*/
+
     }
 
     private void checkForCollisions(Block object, int j)
