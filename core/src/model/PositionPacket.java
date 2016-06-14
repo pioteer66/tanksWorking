@@ -7,6 +7,12 @@ public class PositionPacket extends Packet implements Serializable {
     private double positionX;
     private double positionY;
 
+    public PositionPacket(int id, double positionX, double positionY) {
+        Id = id;
+        this.positionX = positionX;
+        this.positionY = positionY;
+    }
+
     @Override
     public void parsePacket(byte[] buffer, int bytesCount) {
         byte buff[] = {0,1,3,'.',0,1,9,'.',0};

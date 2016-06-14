@@ -8,13 +8,14 @@ import java.util.ArrayList;
 public class TanksGame extends Game {
     private ArrayList<Screen> screenList;
     private int currentScreen;
+    private PacketMagazine magazine;
 
     @Override
     public void create() {
         currentScreen=0;
         screenList=new ArrayList<Screen>(2);
         screenList.add(new MenuScreen(this));
-        screenList.add(new GameScreen(this));
+        screenList.add(new GameScreen(this, magazine));
 
         setScreen(screenList.get(currentScreen));
     }
@@ -27,6 +28,6 @@ public class TanksGame extends Game {
 
     public TanksGame(PacketMagazine magazine)
     {
-
+        this.magazine = magazine;
     }
 }

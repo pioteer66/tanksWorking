@@ -7,6 +7,12 @@ public class PlayerStatisticsPacket extends Packet implements Serializable {
     private int points;
     private int remainingLives;
 
+    public PlayerStatisticsPacket(int playerId, int points, int remainingLives) {
+        this.playerId = playerId;
+        this.points = points;
+        this.remainingLives = remainingLives;
+    }
+
     public int getPlayerId() {
         return playerId;
     }

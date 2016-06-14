@@ -7,6 +7,12 @@ public class MissilePacket extends Packet implements Serializable {
     private double positionX;
     private double positionY;
 
+    public MissilePacket(int playerId, double positionX, double positionY) {
+        this.playerId = playerId;
+        this.positionX = positionX;
+        this.positionY = positionY;
+    }
+
     public int getPlayerId() {
         return playerId;
     }

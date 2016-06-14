@@ -1,11 +1,19 @@
 package com.mygdx.tanks;
 
+import model.*;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.ArrayList;
 
-// nadal nie ruszać robie jeszcze a ja nie
+/**
+ * Created by Kornel on 2016-06-14.
+ */
+
+
+// nadal nie ruszać robie jeszcze
 public class SocketWorker implements Runnable {
     private Socket socket;
     private PacketMagazine packetMagazine;
@@ -18,8 +26,10 @@ public class SocketWorker implements Runnable {
 
     public void run() {
         try {
-            ObjectInputStream dis = new ObjectInputStream(this.socket.getInputStream());
-            ObjectOutputStream dos = new ObjectOutputStream(this.socket.getOutputStream());
+            InputStream inputStream = this.socket.getInputStream();
+            OutputStream outputStream = this.socket.getOutputStream();
+            ObjectInputStream dis = new ObjectInputStream(inputStream);
+            ObjectOutputStream dos = new ObjectOutputStream(outputStream);
             SocketAddress sockaddr = this.socket.getRemoteSocketAddress();
 
             System.out.println("Nawiązano połaczenie z: " + sockaddr.toString());
@@ -28,6 +38,10 @@ public class SocketWorker implements Runnable {
 
             dos.close();
             dis.close();
+            inputStream.close();
+            outputStream.close();
+
+
         } catch (Exception ex) {
             System.out.println(ex);
         }
@@ -51,6 +65,20 @@ public class SocketWorker implements Runnable {
             String message1 = ((String) ois.readObject());
             System.out.println(message1);
 
+            while (true) {
+                ArrayList<ArrayList<? extends Packet>> returnedPacket = (ArrayList<ArrayList<? extends Packet>>) ois.readObject();
+
+
+                ArrayList<PositionPacket> positionPackets = (ArrayList<PositionPacket>) returnedPacket.get(0);
+                ArrayList<MissilePacket> missilePackets = (ArrayList<MissilePacket>) returnedPacket.get(1);
+                ArrayList<HitsPacket> hitsPackets = (ArrayList<HitsPacket>) returnedPacket.get(2);
+                ArrayList<PlayerStatisticsPacket> statisticsPackets = (ArrayList<PlayerStatisticsPacket>) returnedPacket.get(3);
+
+                this.packetMagazine.addPosition(positionPackets);
+                this.packetMagazine.addMissile(missilePackets);
+                this.packetMagazine.addHits(hitsPackets);
+                this.packetMagazine.addStatistic(statisticsPackets);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }

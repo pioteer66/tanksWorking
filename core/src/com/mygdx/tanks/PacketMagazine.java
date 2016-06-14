@@ -1,6 +1,6 @@
 package com.mygdx.tanks;
 
-import model.Packet;
+import model.*;
 
 import java.util.ArrayList;
 import java.util.Queue;
@@ -12,13 +12,32 @@ public class PacketMagazine implements Runnable{
     {
 
     }
-    public void addPacket(byte[] buffer, int bytesCount, int packetId)
-    {
 
+    public void addPosition(ArrayList<PositionPacket> positionPackets){
+        for (PositionPacket packet:positionPackets) {
+            packetsQueue.add(new PositionPacket(packet.getId(), packet.getPositionX(), packet.getPositionY()));
+        }
     }
 
-    @Override
-    public void run() {
+    public void addMissile(ArrayList<MissilePacket> missilePackets){
+        for (MissilePacket packet:missilePackets) {
+            packetsQueue.add(new MissilePacket(packet.getPlayerId(), packet.getPositionX(), packet.getPositionY()));
+        }
+    }
+
+    public void addHits(ArrayList<HitsPacket> hitsPackets){
+        for (HitsPacket packet:hitsPackets) {
+            packetsQueue.add(new HitsPacket(packet.getPlayerId(), packet.getPositionX(), packet.getPositionY()));
+        }
+    }
+
+    public void addStatistic(ArrayList<PlayerStatisticsPacket> statisticsPackets){
+        for (PlayerStatisticsPacket packet: statisticsPackets) {
+            packetsQueue.add(new PlayerStatisticsPacket(packet.getPlayerId(), packet.getPoints(), packet.getRemainingLives()));
+        }
+    }
+
+    public void run(){
 
     }
 }

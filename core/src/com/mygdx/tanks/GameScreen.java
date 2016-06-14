@@ -44,8 +44,7 @@ public class GameScreen implements Screen {
     private PacketMagazine packetMagazine;
 
 
-
-    public GameScreen(Game game){
+    public GameScreen(Game game, PacketMagazine packetMagazine){
         this.game=game;
         this.board = new Board("plansza.txt");
         this.batch= new SpriteBatch();
@@ -59,14 +58,13 @@ public class GameScreen implements Screen {
         brickTexture = new Texture("cegla.png");
         missileTexture = new Texture("pocisk.png");
 
-
-
         tank.setDirection(LEFT);
         this.date = new Date();
         this.timeStart = date.getTime();
         this.timeEnd = date.getTime();
         this.reloadTime = 500; //ms
         this.missileSpeed = 600.0; // jednostek
+        this.packetMagazine = packetMagazine;
 	}
 
 
@@ -114,19 +112,6 @@ public class GameScreen implements Screen {
 
     }
 
-    private void processServerResponse()
-    {
-        /*try{
-            InputStream inFromServer = connectionSocket.getInputStream();
-            DataInputStream in =
-                    new DataInputStream(inFromServer);
-            playerId = Integer.parseInt(in.readUTF());
-        }catch (IOException ex){
-            System.out.println("Problem ze strumieniem wejściowym");
-        }
-*/
-    }
-
     private void checkForCollisions(Block object, int j)
     {
         if(object.getSymbol() != 'Z') {
@@ -172,7 +157,6 @@ public class GameScreen implements Screen {
                 }
             }
             checkForCollisions(object, j);
-            // szybka kolizja pociskow -- potem zastapi ja serwer
             j++;
         }
         updateBoardState();
@@ -313,28 +297,20 @@ public class GameScreen implements Screen {
             //Odczyt klawiszy
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
                 tank.x -= Constants.TANK_SPEED;
-                //out.writeBytes(playerId + "," + Direction.LEFT);
                 tank.setDirection(LEFT);
             } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
                 tank.x += Constants.TANK_SPEED;
                 tank.setDirection(Direction.RIGHT);
-                //out.writeBytes(playerId + "," + Direction.LEFT);
             } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
                 tank.y += Constants.TANK_SPEED;
                 tank.setDirection(Direction.UP);
-                //out.writeBytes(playerId + "," + Direction.LEFT);
             } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
                 tank.y -= Constants.TANK_SPEED;
                 tank.setDirection(Direction.DOWN);
-                //out.writeBytes(playerId + "," + Direction.LEFT);
             } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
                 this.launchMissile();
-                //out.writeBytes(playerId + "," + "");
             }
             collisionDetector(x, y);
-        /*catch (IOException ex){
-            System.out.println("Problem ze strumieniem wyjściowym");
-        }*/
 
     }
     public HashMap<TypeOfObject,Sprite> loadTextures(){
@@ -352,16 +328,13 @@ public class GameScreen implements Screen {
         }catch (Exception e){
             System.out.println("Can't load textures");
         }
-
         //map.forEach((type, sprite) -> sprite.setOriginCenter());
         return map;
 
     }
 
-
 	@Override
 	public void dispose() {
-        /*
 		batch.dispose();
 		stoneTexture.dispose();
 		redTankTexture.dispose();
@@ -370,12 +343,7 @@ public class GameScreen implements Screen {
 		greenTankTexture.dispose();
 		shrubTexture.dispose();
         missileTexture.dispose();
-		brickTexture.dispose();*/
+		brickTexture.dispose();
 	}
 
-    /*
-	public GameScreen(PacketMagazine packetMagazine) {
-        super();
-		this.packetMagazine = packetMagazine;
-	}*/
 }
