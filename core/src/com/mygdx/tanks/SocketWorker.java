@@ -10,7 +10,7 @@ import java.net.SocketAddress;
  */
 
 
-// nadal nie ruszać robie jeszcze
+// nadal nie ruszać robie jeszcze a ja nie
 public class SocketWorker implements Runnable {
     private Socket socket;
     private PacketMagazine packetMagazine;
