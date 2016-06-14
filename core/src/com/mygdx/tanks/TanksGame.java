@@ -36,6 +36,7 @@ public class TanksGame extends ApplicationAdapter {
     private double missileSpeed;     // jednostki odswiezen
     private Socket connectionSocket;
     private int playerId = -1;
+    private PacketMagazine packetMagazine;
 
 	@Override
 	public void create () {
@@ -346,7 +347,9 @@ public class TanksGame extends ApplicationAdapter {
 		brickTexture.dispose();
 	}
 
-	public TanksGame() {
-		super();
+
+	public TanksGame(PacketMagazine packetMagazine) {
+        super();
+		this.packetMagazine = packetMagazine;
 	}
 }
