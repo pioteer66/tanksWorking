@@ -65,14 +65,20 @@ public class SocketWorker implements Runnable {
             String message1 = ((String) ois.readObject());
             System.out.println(message1);
 
-            ArrayList<ArrayList<? extends Packet>>  returnedPacket = (ArrayList<ArrayList<? extends Packet>>) ois.readObject();;
+            while (true) {
+                ArrayList<ArrayList<? extends Packet>> returnedPacket = (ArrayList<ArrayList<? extends Packet>>) ois.readObject();
 
-            ArrayList<PositionPacket> positionPackets = (ArrayList<PositionPacket>) returnedPacket.get(0);
-            ArrayList<MissilePacket> missilePackets = (ArrayList<MissilePacket> ) returnedPacket.get(0);
-            ArrayList<HitsPacket> hitsPackets = (ArrayList<HitsPacket>) returnedPacket.get(0);
-            ArrayList<PlayerStatisticsPacket> statisticsPackets = ( ArrayList<PlayerStatisticsPacket> )  returnedPacket.get(0);
-            //this.packetMagazine.
 
+                ArrayList<PositionPacket> positionPackets = (ArrayList<PositionPacket>) returnedPacket.get(0);
+                ArrayList<MissilePacket> missilePackets = (ArrayList<MissilePacket>) returnedPacket.get(1);
+                ArrayList<HitsPacket> hitsPackets = (ArrayList<HitsPacket>) returnedPacket.get(2);
+                ArrayList<PlayerStatisticsPacket> statisticsPackets = (ArrayList<PlayerStatisticsPacket>) returnedPacket.get(3);
+
+                this.packetMagazine.addPosition(positionPackets);
+                this.packetMagazine.addMissile(missilePackets);
+                this.packetMagazine.addHits(hitsPackets);
+                this.packetMagazine.addStatistic(statisticsPackets);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
