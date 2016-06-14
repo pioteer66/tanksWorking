@@ -2,6 +2,7 @@ package com.mygdx.tanks.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.mygdx.tanks.PacketMagazine;
 import com.mygdx.tanks.TanksGame;
 import com.mygdx.tanks.PacketMagazine;
 import com.mygdx.tanks.SocketWorker;
