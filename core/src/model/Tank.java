@@ -3,9 +3,6 @@ package model;
 
 import java.awt.*;
 
-/**
- * Created by Dawid on 2016-04-12.
- */
 public class Tank extends Rectangle{
     private int playerId;
     private int lives;
@@ -43,10 +40,6 @@ public class Tank extends Rectangle{
     public void setMoving(boolean moving) {
         this.isMoving = moving;
     }
-
-
-
-
 
     public Tank(int playerId, int lives, int positionX, int positionY){
         super(positionX,positionY,50,50);
