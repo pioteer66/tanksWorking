@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import com.badlogic.gdx.utils.StringBuilder;
 import net.tanks.*;
 import java.awt.*;
 import java.io.*;
@@ -25,6 +26,7 @@ public class GameScreen implements Screen {
     Board board;
     OutputStream outToServer;
     DataOutputStream out;
+    StringBuilder comunicate;
 
 
     private Date date;
@@ -62,6 +64,7 @@ public class GameScreen implements Screen {
         this.reloadTime = 500; //ms
         this.missileSpeed = 600.0; // jednostek
         this.magazine = magazine;
+        comunicate = new StringBuilder();
 	}
 
 
@@ -342,24 +345,26 @@ public class GameScreen implements Screen {
         Tank tank = board.getTanks().get(magazine.getActivePlayerId());
         int x = (int) tank.getX();
         int y = (int) tank.getY();
+
         try{
             //Odczyt klawiszy
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-                oos.writeObject(magazine.getActivePlayerId()+ ",1");
+                comunicate.append(magazine.getActivePlayerId()+ ",1");
                 //tank.x -= Constants.TANK_SPEED;
             } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
                 //tank.x += Constants.TANK_SPEED;
-                oos.writeObject(magazine.getActivePlayerId()+ ",2");
+                comunicate.append(magazine.getActivePlayerId()+ ",2");
             } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
                 //tank.y += Constants.TANK_SPEED;
-                oos.writeObject(magazine.getActivePlayerId()+ ",3");
+                comunicate.append(magazine.getActivePlayerId()+ ",3");
             } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
                 //tank.y -= Constants.TANK_SPEED;
-                oos.writeObject(magazine.getActivePlayerId()+ ",4");
+                comunicate.append(magazine.getActivePlayerId()+ ",4");
             } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                oos.writeObject(magazine.getActivePlayerId()+ ",5");
-                //this.launchMissile();
+                comunicate.append(magazine.getActivePlayerId()+ ",5");
             }
+            else comunicate.append(magazine.getActivePlayerId()+",0");
+            oos.writeObject(comunicate.toString());
             //collisionDetector(x, y);
         }
         catch (IOException ex){
