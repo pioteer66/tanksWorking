@@ -1,7 +1,6 @@
 package com.mygdx.tanks;
 
-import model.*;
-
+import net.tanks.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -44,7 +43,7 @@ public class SocketWorker implements Runnable {
 
 
     public void process(ObjectInputStream ois, ObjectOutputStream oos) {
-        try {
+        try{
             int playerId = ((Integer) ois.readObject()).intValue();
             this.magazine.setActivePlayerId(playerId);
             char[][] charPlansza = (char[][]) ois.readObject();
@@ -67,22 +66,23 @@ public class SocketWorker implements Runnable {
 
 
             while (true) {
-                ArrayList<ArrayList<? extends Packet>> returnedPacket = (ArrayList<ArrayList<? extends Packet>>) ois.readObject();
+                ArrayList<ArrayList<Packet>> list = new ArrayList<ArrayList<Packet>>();
+                ArrayList<ArrayList<? extends Packet>> returnedPacket =
+                        (ArrayList<ArrayList<? extends Packet>>) ois.readObject();
 
                 ArrayList<PositionPacket> positionPackets = (ArrayList<PositionPacket>) returnedPacket.get(0);
                 ArrayList<MissilePacket> missilePackets = (ArrayList<MissilePacket>) returnedPacket.get(1);
                 ArrayList<HitsPacket> hitsPackets = (ArrayList<HitsPacket>) returnedPacket.get(2);
                 ArrayList<PlayerStatisticsPacket> statisticsPackets = (ArrayList<PlayerStatisticsPacket>) returnedPacket.get(3);
-                synchronized (this.magazine)
-                {
-                    this.magazine.addPosition(positionPackets);
-                    this.magazine.addMissile(missilePackets);
-                    this.magazine.addHits(hitsPackets);
-                    this.magazine.addStatistic(statisticsPackets);
+                //this.magazine.addPosition(positionPackets);
+                //this.magazine.addMissile(missilePackets);
+                //.magazine.addHits(hitsPackets);
+                //this.magazine.addStatistic(statisticsPackets);
                 }
 
-            }
-        } catch (Exception ex) {
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }catch (IOException ex){
             ex.printStackTrace();
         }
     }

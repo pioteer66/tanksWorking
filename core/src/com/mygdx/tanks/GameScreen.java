@@ -1,22 +1,19 @@
 package com.mygdx.tanks;
 
-
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import model.*;
 
+import net.tanks.*;
 import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-
-import static model.Direction.LEFT;
 
 public class GameScreen implements Screen {
     private Game game;

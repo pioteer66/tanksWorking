@@ -1,9 +1,8 @@
 package com.mygdx.tanks;
 
-import model.*;
-
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import net.tanks.*;
 import java.util.ArrayList;
 import java.util.Queue;
 
