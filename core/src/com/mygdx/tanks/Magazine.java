@@ -13,11 +13,14 @@ potem dodam tu semafory - na razie nie potrzebne,
 robcie tu metody get,set i check i trzyajcie obiekty
  */
 
-public class PacketMagazine implements Runnable{
+public class Magazine implements Runnable{
     private Queue<Packet> packetsQueue;
+    private Board board;
     private char[][] map =null;
+    private int activePlayerId;
+    private int livesOnStart;
 
-    public PacketMagazine()
+    public Magazine()
     {
 
     }
@@ -46,8 +49,20 @@ public class PacketMagazine implements Runnable{
         }
     }
 
+    public Board getBoard() {
+        return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
     public Boolean checkMap(){
-        return (this.map == null)? false : true;
+        return (this.map == null);
+    }
+
+    public Boolean checkBoard(){
+        return (this.board == null);
     }
 
     public void setMap(char [][] map){
@@ -56,6 +71,22 @@ public class PacketMagazine implements Runnable{
 
     public char[][] getMap(){
         return this.map;
+    }
+
+    public int getActivePlayerId() {
+        return activePlayerId;
+    }
+
+    public void setActivePlayerId(int activePlayerId) {
+        this.activePlayerId = activePlayerId;
+    }
+
+    public int getLivesOnStart() {
+        return livesOnStart;
+    }
+
+    public void setLivesOnStart(int livesOnStart) {
+        this.livesOnStart = livesOnStart;
     }
 
     public void run(){

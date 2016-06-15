@@ -30,9 +30,3 @@
 - - - C C Z - - - - - - - - - Z Z Z Z - - - - - - - - - - - - -
 - - - - - - - - - - - - - - - - - - - - - C C - - - Z K K - - -
 K K K K K K K K K K - - - - - - - - - - - - - - - - - - - - - -
-
-
-C C C C C
-C C K C C
-C C K C C
-C C C C C

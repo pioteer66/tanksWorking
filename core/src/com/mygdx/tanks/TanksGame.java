@@ -3,13 +3,14 @@ package com.mygdx.tanks;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 
 public class TanksGame extends Game {
     private ArrayList<Screen> screenList;
     private int currentScreen;
-    private PacketMagazine magazine;
+    private Magazine magazine;
     private int portNumber = 8088;
     private String ipAdress;
 
@@ -30,7 +31,7 @@ public class TanksGame extends Game {
         setScreen(screenList.get(currentScreen));
     }
 
-    public TanksGame(PacketMagazine magazine) {
+    public TanksGame(Magazine magazine) {
         this.magazine = magazine;
     }
 
@@ -40,8 +41,9 @@ public class TanksGame extends Game {
     }
 
     private void startSocketWorker(){
-        try{
-            Socket socket = new Socket(this.ipAdress, portNumber);
+        Socket socket = null;
+        try {
+            socket = new Socket(this.ipAdress, portNumber);
             SocketWorker sw = new SocketWorker(socket,this.magazine);
         new Thread(sw).start();
         } catch (Exception ex){

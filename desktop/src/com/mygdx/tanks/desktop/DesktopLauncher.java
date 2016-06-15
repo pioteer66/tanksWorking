@@ -2,16 +2,13 @@ package com.mygdx.tanks.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.mygdx.tanks.PacketMagazine;
+import com.mygdx.tanks.Magazine;
 import com.mygdx.tanks.TanksGame;
-import com.mygdx.tanks.PacketMagazine;
-import com.mygdx.tanks.SocketWorker;
-import java.net.Socket;
 
 
 public class DesktopLauncher {
 	public static final String ip = "localhost";
-	private static final PacketMagazine packetMagazine = new PacketMagazine();
+	private static final Magazine magazine = new Magazine();
 
 	public static void main (String[] arg) {
 		try {
@@ -24,7 +21,7 @@ public class DesktopLauncher {
 			config.height= 800;
 			config.resizable = false;
 			config.backgroundFPS = 60;
-			new LwjglApplication(new TanksGame(packetMagazine), config);
+			new LwjglApplication(new TanksGame(magazine), config);
 		}
 
 	}

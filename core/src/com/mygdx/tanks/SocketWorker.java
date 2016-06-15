@@ -3,7 +3,6 @@ package com.mygdx.tanks;
 import model.*;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.ArrayList;
@@ -16,12 +15,11 @@ import java.util.ArrayList;
 // nadal nie ruszać robie jeszcze
 public class SocketWorker implements Runnable {
     private Socket socket;
-    private PacketMagazine packetMagazine;
-    private int playerId;
+    private Magazine magazine;
 
-    public SocketWorker(Socket socket, PacketMagazine packetMagazine) {
+    public SocketWorker(Socket socket, Magazine magazine) {
         this.socket = socket;
-        this.packetMagazine = packetMagazine;
+        this.magazine = magazine;
     }
 
 
@@ -46,23 +44,25 @@ public class SocketWorker implements Runnable {
     public void process(ObjectInputStream ois, ObjectOutputStream oos) {
         try {
             int playerId = ((Integer) ois.readObject()).intValue();
-            this.playerId = playerId;
+            this.magazine.setActivePlayerId(playerId);
             char[][] charPlansza = (char[][]) ois.readObject();
-            this.packetMagazine.setMap(charPlansza);
-
-
+            this.magazine.setMap(charPlansza);
             int lives = ((Integer) ois.readObject()).intValue();
+            this.magazine.setLivesOnStart(lives);
+
             String message = ((String) ois.readObject());
-            System.out.println(playerId);
+            System.out.println("Id gracza: "+playerId);
+            System.out.println("Początkowy stan planszy");
             for (int i = 0; i < 32; i++) {
                 for (int j = 0; j < 32; j++)
                     System.out.print(charPlansza[i][j] + " ");
                 System.out.println();
             }
-            System.out.println(lives);
-            System.out.println(message);
+            System.out.println("Dostępne życia: "+lives);
+            System.out.println("Oczekiwanie na dołączenie 4 graczy..");
             String message1 = ((String) ois.readObject());
             System.out.println(message1);
+
 
             while (true) {
                 ArrayList<ArrayList<? extends Packet>> returnedPacket = (ArrayList<ArrayList<? extends Packet>>) ois.readObject();
@@ -72,10 +72,10 @@ public class SocketWorker implements Runnable {
                 ArrayList<HitsPacket> hitsPackets = (ArrayList<HitsPacket>) returnedPacket.get(2);
                 ArrayList<PlayerStatisticsPacket> statisticsPackets = (ArrayList<PlayerStatisticsPacket>) returnedPacket.get(3);
 
-                this.packetMagazine.addPosition(positionPackets);
-                this.packetMagazine.addMissile(missilePackets);
-                this.packetMagazine.addHits(hitsPackets);
-                this.packetMagazine.addStatistic(statisticsPackets);
+                this.magazine.addPosition(positionPackets);
+                this.magazine.addMissile(missilePackets);
+                this.magazine.addHits(hitsPackets);
+                this.magazine.addStatistic(statisticsPackets);
 
             }
         } catch (Exception ex) {

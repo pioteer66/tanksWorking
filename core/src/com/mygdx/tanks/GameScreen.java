@@ -11,14 +11,10 @@ import model.*;
 
 import java.awt.*;
 import java.io.*;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static model.Direction.LEFT;
 
@@ -28,7 +24,7 @@ public class GameScreen implements Screen {
     final private HashMap<TypeOfObject, Sprite> spriteMap;
 	Texture greenTankTexture, redTankTexture, blueTankTexture, orangeTankTexture;
 	Texture shrubTexture, brickTexture, stoneTexture, missileTexture;
-    Tank tank = new Tank(1,5, Constants.TANK_START_X * Constants.TANK_SIZE, Constants.TANK_START_Y * Constants.TANK_SIZE);
+    //Tank tank = new Tank(1,5, Constants.TANK_START_X * Constants.TANK_SIZE, Constants.TANK_START_Y * Constants.TANK_SIZE);
     Board board;
     OutputStream outToServer;
     DataOutputStream out;
@@ -41,14 +37,11 @@ public class GameScreen implements Screen {
     private double missileSpeed;     // jednostki odswiezen
     private Socket connectionSocket;
     private int playerId = -1;
-    private PacketMagazine packetMagazine;
-    private boolean pierwszy = true; // czy gra renderowana jest pierwszy raz
+    private Magazine magazine;
+    private boolean uninitialized = true; // czy gra renderowana jest pierwszy raz
 
-
-    public GameScreen(Game game, PacketMagazine packetMagazine){
+    public GameScreen(Game game, Magazine magazine){
         this.game=game;
-
-        this.board = new Board("plansza.txt");
         this.batch= new SpriteBatch();
         this.spriteMap=this.loadTextures();
         stoneTexture = new Texture("niezniszczalny.png");
@@ -59,14 +52,15 @@ public class GameScreen implements Screen {
         shrubTexture = new Texture("krzak.png");
         brickTexture = new Texture("cegla.png");
         missileTexture = new Texture("pocisk.png");
+        board = new Board("plansza.txt");
 
-        tank.setDirection(LEFT);
+        //tank.setDirection(LEFT);
         this.date = new Date();
         this.timeStart = date.getTime();
         this.timeEnd = date.getTime();
         this.reloadTime = 500; //ms
         this.missileSpeed = 600.0; // jednostek
-        this.packetMagazine = packetMagazine;
+        this.magazine = magazine;
 	}
 
 
@@ -91,32 +85,30 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        update();
+        //update();
         Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         batch.draw(brickTexture, 775,775);
-        double x = tank.getX();
-        double y = tank.getY();
-        batch.draw(new TextureRegion(redTankTexture), (float)x, (float)y,
+        //double x = tank.getX();
+        //double y = tank.getY();
+        /*batch.draw(new TextureRegion(redTankTexture), (float)x, (float)y,
                 (float) tank.getCenterX()-(float)x, (float) tank.getCenterY()-(float)y,
-                (float) tank.getWidth(), (float) tank.getHeight(), 1f, 1f, (float) tank.getDirection().getValue()*90);
-        drawMissiles();
-        removeRedundantMissiles();
-
-        while(pierwszy == true){
+                (float) tank.getWidth(), (float) tank.getHeight(), 1f, 1f, (float) tank.getDirection().getValue()*90);*/
+        while(uninitialized){
             try {
                 Thread.sleep(25);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if(this.packetMagazine.checkMap()){
-                this.board.newBoard(this.packetMagazine.getMap());
-                pierwszy = false;
+            if(!this.magazine.checkMap()){
+                this.board = new Board(magazine.getMap(), magazine.getLivesOnStart());
+                uninitialized = false;
                 break;
             }
         }
         drawBoard();
+        drawMissiles();
         batch.end();
         this.date = new Date(); // aktualizuje czas
     }
@@ -137,6 +129,14 @@ public class GameScreen implements Screen {
                 }
             }
         }
+    }
+
+    public int getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
     }
 
     private void updateBoardState()
@@ -170,10 +170,38 @@ public class GameScreen implements Screen {
                     break;
                 }
             }
-            checkForCollisions(object, j);
+            //checkForCollisions(object, j);
             j++;
         }
-        updateBoardState();
+        for (Tank tank: board.getTanks()){
+                double x= tank.getX();
+                double y = tank.getY();
+                batch.draw(new TextureRegion(returnProperTexture(tank.getPlayerId())), (float)tank.x, (float)y,
+                        (float) tank.getCenterX()-(float)x, (float) tank.getCenterY()-(float)y,
+                        (float) tank.getWidth(), (float) tank.getHeight(), 1f, 1f, (float) tank.getDirection().getValue()*90);
+        }
+       // updateBoardState();
+    }
+
+    private Texture returnProperTexture(int id)
+    {
+        switch (id){
+            case 0:{
+                return redTankTexture;
+            }
+            case 1:{
+                return  greenTankTexture;
+            }
+            case 2:{
+                return orangeTankTexture;
+            }
+            case 3:{
+                return blueTankTexture;
+            }
+            default:{
+                return null;
+            }
+        }
     }
 
     private void updateMissilePosition(Missile missile)
@@ -237,7 +265,7 @@ public class GameScreen implements Screen {
         }
     }
 
-    private Point getMissileStartingPosition()
+    /*private Point getMissileStartingPosition()
     {
         Point start = new Point();
         start.x = 0;
@@ -266,10 +294,10 @@ public class GameScreen implements Screen {
 
         }
         return start;
-    }
+    }*/
 
-    private void launchMissile(){
-        if(this.timeStart >= timeEnd) { /* sprawdza czy upłyna rzadany czas przaładowania */
+    /*private void launchMissile(){
+        if(this.timeStart >= timeEnd) { //sprawdza czy upłyna rzadany czas przaładowania
             Point start = getMissileStartingPosition();
             //start_x i start_y to początkowa pozycja pocisku
             Missile missile = new Missile(tank, tank.getDirection());
@@ -278,15 +306,16 @@ public class GameScreen implements Screen {
             board.missilesList.add(missile);
             timeEnd = this.date.getTime() + this.reloadTime;
         }
-    }
-    private void collisionDetector(int x, int y){
+    }*/
+
+    /*private void collisionDetector(int x, int y){
         //uniemożliwienie wyjechania poza planszę
         if (tank.getX() >= Constants.WIDTH - Constants.TANK_SIZE || tank.getX() <=0 ||
             tank.getY() <= 0 || tank.getY() >= Constants.HEIGHT - Constants.TANK_SIZE)
         {
             tank.x = x;
             tank.y = y;
-        } else { /* //sprawdzenie kolizji, czyli dzięki temu czołg nie wjeżdża na bloki (chyba, że to zarośla) */
+        } else {  //sprawdzenie kolizji, czyli dzięki temu czołg nie wjeżdża na bloki (chyba, że to zarośla)
             boolean isCollision = false;
             for (Block object : board.objectsList)
             {
@@ -296,15 +325,15 @@ public class GameScreen implements Screen {
                     break;
                 }
             }
-            if (isCollision) /*  //Jeśli wystąpiła kolizja z blokiem, to cofnij na pole sprzed zmiany */
+            if (isCollision)   //Jeśli wystąpiła kolizja z blokiem, to cofnij na pole sprzed zmiany
             {
                 tank.x = x;
                 tank.y = y;
             }
         }
-    }
+    }*/
 
-    private void update(){
+    /*private void update(){
         this.timeStart = date.getTime();
         int x = (int) tank.getX();
         int y = (int) tank.getY();
@@ -325,8 +354,9 @@ public class GameScreen implements Screen {
                 this.launchMissile();
             }
             collisionDetector(x, y);
+    }*/
 
-    }
+
     public HashMap<TypeOfObject,Sprite> loadTextures(){
         HashMap<TypeOfObject, Sprite> map = new HashMap<TypeOfObject, Sprite>();
         try {
