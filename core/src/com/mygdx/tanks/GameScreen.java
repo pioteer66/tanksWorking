@@ -350,7 +350,7 @@ public class GameScreen implements Screen {
         int y = (int) tank.getY();
 
         try{
-            //Odczyt klawiszyy
+            //Odczyt klawiszyyy
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
                 comunicate.append(magazine.getActivePlayerId()+ ",1");
                 //tank.x -= Constants.TANK_SPEED;
