@@ -24,8 +24,6 @@ public class GameScreen implements Screen {
 	Texture shrubTexture, brickTexture, stoneTexture, missileTexture;
     //Tank tank = new Tank(1,5, Constants.TANK_START_X * Constants.TANK_SIZE, Constants.TANK_START_Y * Constants.TANK_SIZE);
     Board board;
-    OutputStream outToServer;
-    DataOutputStream out;
     StringBuilder comunicate;
 
 
@@ -115,6 +113,11 @@ public class GameScreen implements Screen {
         oos = magazine.oos;
         drawBoard();
         drawMissiles();
+        try {
+            Thread.sleep(25);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         update();
         batch.end();
         this.date = new Date(); // aktualizuje czas
@@ -370,7 +373,34 @@ public class GameScreen implements Screen {
         catch (IOException ex){
             ex.printStackTrace();
         }
+        if (magazine.IsQueueEmpty()) return;
+        ArrayList<ArrayList<? extends Packet>> packet = magazine.getPacketFromQueue();
+        updatePositions((ArrayList<PositionPacket>)packet.get(0));
+    }
 
+    public synchronized void updatePositions(ArrayList <PositionPacket> positionPackets){
+        for (PositionPacket packet:positionPackets) {
+            magazine.getBoard().getTanks().get(packet.getId()).setLocation((int)packet.getPositionX()*10,
+                    (int)packet.getPositionY()*10);
+        }
+    }
+
+    public void updateMissiles(ArrayList<MissilePacket> missilePackets){
+        for (MissilePacket packet:missilePackets) {
+            //packetsQueue.add(new MissilePacket(packet.getPlayerId(), packet.getPositionX(), packet.getPositionY()));
+        }
+    }
+
+    public void updateHits(ArrayList<HitsPacket> hitsPackets){
+        for (HitsPacket packet:hitsPackets) {
+            //packetsQueue.add(new HitsPacket(packet.getPlayerId(), packet.getPositionX(), packet.getPositionY()));
+        }
+    }
+
+    public void updateStatistics(ArrayList<PlayerStatisticsPacket> statisticsPackets){
+        for (PlayerStatisticsPacket packet: statisticsPackets) {
+            //packetsQueue.add(new PlayerStatisticsPacket(packet.getPlayerId(), packet.getPoints(), packet.getRemainingLives()));
+        }
     }
 
 

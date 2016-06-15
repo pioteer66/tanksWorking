@@ -29,9 +29,19 @@ public class Magazine implements Runnable{
         packetsQueue = new LinkedList<ArrayList<ArrayList<? extends Packet>>>();
     }
 
-    public void addPacketToQueue(ArrayList<ArrayList<? extends  Packet>> position)
+    public synchronized void addPacketToQueue(ArrayList<ArrayList<? extends  Packet>> position)
     {
         packetsQueue.add(position);
+    }
+
+    public synchronized ArrayList<ArrayList<? extends Packet>> getPacketFromQueue()
+    {
+        return packetsQueue.poll();
+    }
+
+    public synchronized boolean IsQueueEmpty()
+    {
+        return packetsQueue.isEmpty();
     }
 
     /*public void addPosition(ArrayList<PositionPacket> positionPackets){
