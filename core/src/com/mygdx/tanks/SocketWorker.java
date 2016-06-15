@@ -17,6 +17,7 @@ import java.util.ArrayList;
 public class SocketWorker implements Runnable {
     private Socket socket;
     private PacketMagazine packetMagazine;
+    private int playerId;
 
     public SocketWorker(Socket socket, PacketMagazine packetMagazine) {
         this.socket = socket;
@@ -26,10 +27,8 @@ public class SocketWorker implements Runnable {
 
     public void run() {
         try {
-            InputStream inputStream = this.socket.getInputStream();
-            OutputStream outputStream = this.socket.getOutputStream();
-            ObjectInputStream dis = new ObjectInputStream(inputStream);
-            ObjectOutputStream dos = new ObjectOutputStream(outputStream);
+            ObjectInputStream dis = new ObjectInputStream(this.socket.getInputStream());
+            ObjectOutputStream dos = new ObjectOutputStream(this.socket.getOutputStream());
             SocketAddress sockaddr = this.socket.getRemoteSocketAddress();
 
             System.out.println("Nawiązano połaczenie z: " + sockaddr.toString());
@@ -38,10 +37,6 @@ public class SocketWorker implements Runnable {
 
             dos.close();
             dis.close();
-            inputStream.close();
-            outputStream.close();
-
-
         } catch (Exception ex) {
             System.out.println(ex);
         }
@@ -51,6 +46,7 @@ public class SocketWorker implements Runnable {
     public void process(ObjectInputStream ois, ObjectOutputStream oos) {
         try {
             int playerId = ((Integer) ois.readObject()).intValue();
+            this.playerId = playerId;
             char[][] charPlansza = (char[][]) ois.readObject();
             this.packetMagazine.setMap(charPlansza);
 

@@ -1,20 +1,15 @@
 package com.mygdx.tanks;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import model.Tank;
 
 public class MenuScreen implements Screen {
     private Stage stage;
@@ -23,7 +18,8 @@ public class MenuScreen implements Screen {
     private Skin skin;
     private SpriteBatch batch;
     private Image logo;
-    private TextField textField;
+    private TextField serverField;
+    private TextField portField;
 
     public MenuScreen(TanksGame game){
         this.game=game;
@@ -40,44 +36,37 @@ public class MenuScreen implements Screen {
         final TextButton textButton= new TextButton("Join the game", skin);
         Label label =new Label("Enter game ip:", skin);
         label.setPosition(Gdx.graphics.getWidth()/2 -100, Gdx.graphics.getHeight()/2);
-        textField= new TextField("",skin);
-        textField.setPosition(Gdx.graphics.getWidth()/2 -100, Gdx.graphics.getHeight()/2 -30);
-        textField.setWidth(200);
-        textField.setHeight(30);
+        serverField = new TextField("",skin);
+        serverField.setPosition(Gdx.graphics.getWidth()/2 -100, Gdx.graphics.getHeight()/2 -30);
+        serverField.setWidth(200);
+        serverField.setHeight(30);
+        serverField.setText("localhost");
+
+        Label portLabel =new Label("Enter port number:", skin);
+        portLabel.setPosition(Gdx.graphics.getWidth()/2 -100, Gdx.graphics.getHeight()/2-55);
+        portField = new TextField("",skin);
+        portField.setPosition(Gdx.graphics.getWidth()/2 -100, Gdx.graphics.getHeight()/2-80);
+        portField.setWidth(200);
+        portField.setHeight(30);
+        portField.setText("8088");
+
         textButton.setWidth(200);
         textButton.setHeight(20);
-        textButton.setPosition(Gdx.graphics.getWidth()/2 -100, Gdx.graphics.getHeight()/2 -60);
+        textButton.setPosition(Gdx.graphics.getWidth()/2 -100, Gdx.graphics.getHeight()/2 -110);
         textButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setIP(textField.getText());
+                game.setIpAndPort(serverField.getText(), portField.getText());
                 game.nextScreen();
             }
         });
         stage.addActor(textButton);
-        stage.addActor(textField);
+        stage.addActor(serverField);
+        stage.addActor(portField);
+        stage.addActor(portLabel);
         stage.addActor(label);
         stage.addActor(logo);
         Gdx.input.setInputProcessor(stage);
-
-        //Sprite sprite= new Sprite(new Texture("czerwonyCzolg.png"));
-        /*
-        batch=new SpriteBatch();
-        stage=new Stage();
-        Gdx.input.setInputProcessor(stage);
-        skin=new Skin();
-        BitmapFont bitmapFont = new BitmapFont();
-        skin.add("default", bitmapFont);
-        //TextureAtlas buttonAtlas = new TextureAtlas("czerwonyCzolg.png");
-        //skin.addRegions(buttonAtlas);
-        /*
-        TextButton.TextButtonStyle textButtonStyle= new TextButton.TextButtonStyle();
-        textButtonStyle.font=bitmapFont;
-        textButtonStyle.up = skin.getDrawable("czerwonyCzolg.png");
-        textButtonStyle.down = skin.getDrawable("czerwonyCzolg.png");
-        textButtonStyle.checked = skin.getDrawable("czerwonyCzolg.png");
-        Button button=new Button(skin);
-        stage.addActor(button);*/
 
     }
     @Override

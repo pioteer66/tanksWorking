@@ -340,7 +340,7 @@ public class GameScreen implements Screen {
             map.put(TypeOfObject.Missile,new Sprite(new Texture("pocisk.png")));
             map.put(TypeOfObject.Explosion, new Sprite(new Texture("wybuch.png")));
         }catch (Exception e){
-            System.out.println("Can't load textures");
+            System.out.println("Nie można załadować tekstur");
         }
         //map.forEach((type, sprite) -> sprite.setOriginCenter());
         return map;

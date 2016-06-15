@@ -15,8 +15,6 @@ public class DesktopLauncher {
 
 	public static void main (String[] arg) {
 		try {
-
-
 			// trzeba jeszcze zamykać socket ale  nie wiem gdzie , na razie
 		} catch (Exception ex){
 			System.out.println(ex);

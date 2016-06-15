@@ -10,7 +10,7 @@ public class TanksGame extends Game {
     private ArrayList<Screen> screenList;
     private int currentScreen;
     private PacketMagazine magazine;
-    public static final int PORT = 8088;
+    private int portNumber = 8088;
     private String ipAdress;
 
     @Override
@@ -34,17 +34,19 @@ public class TanksGame extends Game {
         this.magazine = magazine;
     }
 
-    public void setIP(String text){
-        this.ipAdress = text;
+    public void setIpAndPort(String server, String port){
+        this.ipAdress = server;
+        this.portNumber = Integer.parseInt(port);
     }
 
     private void startSocketWorker(){
         try{
-            Socket socket = new Socket(this.ipAdress, PORT);
+            Socket socket = new Socket(this.ipAdress, portNumber);
             SocketWorker sw = new SocketWorker(socket,this.magazine);
         new Thread(sw).start();
         } catch (Exception ex){
-
+            System.out.println("Nie można połączyć z serwerem z podanymi ustawieniami");
+            return;
         }
 
     }
