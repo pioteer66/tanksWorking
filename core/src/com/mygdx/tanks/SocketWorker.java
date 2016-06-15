@@ -74,10 +74,10 @@ public class SocketWorker implements Runnable {
                 ArrayList<MissilePacket> missilePackets = (ArrayList<MissilePacket>) returnedPacket.get(1);
                 ArrayList<HitsPacket> hitsPackets = (ArrayList<HitsPacket>) returnedPacket.get(2);
                 ArrayList<PlayerStatisticsPacket> statisticsPackets = (ArrayList<PlayerStatisticsPacket>) returnedPacket.get(3);
-                //this.magazine.addPosition(positionPackets);
-                //this.magazine.addMissile(missilePackets);
-                //.magazine.addHits(hitsPackets);
-                //this.magazine.addStatistic(statisticsPackets);
+                this.magazine.addPosition(positionPackets);
+                this.magazine.addMissile(missilePackets);
+                this.magazine.addHits(hitsPackets);
+                this.magazine.addStatistic(statisticsPackets);
                 }
 
         } catch (ClassNotFoundException ex) {

@@ -347,13 +347,13 @@ public class GameScreen implements Screen {
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
                 oos.writeObject(magazine.getActivePlayerId()+ ",1");
                 //tank.x -= Constants.TANK_SPEED;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
                 //tank.x += Constants.TANK_SPEED;
                 oos.writeObject(magazine.getActivePlayerId()+ ",2");
-            } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
                 //tank.y += Constants.TANK_SPEED;
                 oos.writeObject(magazine.getActivePlayerId()+ ",3");
-            } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
                 //tank.y -= Constants.TANK_SPEED;
                 oos.writeObject(magazine.getActivePlayerId()+ ",4");
             } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
