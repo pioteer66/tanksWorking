@@ -25,16 +25,18 @@ public class SocketWorker implements Runnable {
 
     public void run() {
         try {
-            ObjectInputStream dis = new ObjectInputStream(this.socket.getInputStream());
-            ObjectOutputStream dos = new ObjectOutputStream(this.socket.getOutputStream());
+            ObjectInputStream ois = new ObjectInputStream(this.socket.getInputStream());
+            ObjectOutputStream oos = new ObjectOutputStream(this.socket.getOutputStream());
+            magazine.setOis(ois);
+            magazine.setOos(oos);
             SocketAddress sockaddr = this.socket.getRemoteSocketAddress();
 
             System.out.println("Nawiązano połaczenie z: " + sockaddr.toString());
-            process(dis, dos);
+            process(magazine.getOis(), magazine.getOos());
             System.out.println("Klient zakończył połaczenie: " + sockaddr.toString());
 
-            dos.close();
-            dis.close();
+            oos.close();
+            ois.close();
         } catch (Exception ex) {
             System.out.println(ex);
         }
@@ -71,11 +73,13 @@ public class SocketWorker implements Runnable {
                 ArrayList<MissilePacket> missilePackets = (ArrayList<MissilePacket>) returnedPacket.get(1);
                 ArrayList<HitsPacket> hitsPackets = (ArrayList<HitsPacket>) returnedPacket.get(2);
                 ArrayList<PlayerStatisticsPacket> statisticsPackets = (ArrayList<PlayerStatisticsPacket>) returnedPacket.get(3);
-
-                this.magazine.addPosition(positionPackets);
-                this.magazine.addMissile(missilePackets);
-                this.magazine.addHits(hitsPackets);
-                this.magazine.addStatistic(statisticsPackets);
+                synchronized (this.magazine)
+                {
+                    this.magazine.addPosition(positionPackets);
+                    this.magazine.addMissile(missilePackets);
+                    this.magazine.addHits(hitsPackets);
+                    this.magazine.addStatistic(statisticsPackets);
+                }
 
             }
         } catch (Exception ex) {

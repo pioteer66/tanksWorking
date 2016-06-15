@@ -2,6 +2,8 @@ package com.mygdx.tanks;
 
 import model.*;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Queue;
 
@@ -15,6 +17,8 @@ robcie tu metody get,set i check i trzyajcie obiekty
 
 public class Magazine implements Runnable{
     private Queue<Packet> packetsQueue;
+    ObjectInputStream ois;
+    ObjectOutputStream oos;
     private Board board;
     private char[][] map =null;
     private int activePlayerId;
@@ -87,6 +91,22 @@ public class Magazine implements Runnable{
 
     public void setLivesOnStart(int livesOnStart) {
         this.livesOnStart = livesOnStart;
+    }
+
+    public ObjectInputStream getOis() {
+        return ois;
+    }
+
+    public void setOis(ObjectInputStream ois) {
+        this.ois = ois;
+    }
+
+    public ObjectOutputStream getOos() {
+        return oos;
+    }
+
+    public void setOos(ObjectOutputStream oos) {
+        this.oos = oos;
     }
 
     public void run(){

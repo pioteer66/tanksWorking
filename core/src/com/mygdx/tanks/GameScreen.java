@@ -39,6 +39,9 @@ public class GameScreen implements Screen {
     private int playerId = -1;
     private Magazine magazine;
     private boolean uninitialized = true; // czy gra renderowana jest pierwszy raz
+    private ObjectInputStream ois;
+    private ObjectOutputStream oos;
+    private Socket socket;
 
     public GameScreen(Game game, Magazine magazine){
         this.game=game;
@@ -53,6 +56,7 @@ public class GameScreen implements Screen {
         brickTexture = new Texture("cegla.png");
         missileTexture = new Texture("pocisk.png");
         board = new Board("plansza.txt");
+
 
         //tank.setDirection(LEFT);
         this.date = new Date();
@@ -95,20 +99,23 @@ public class GameScreen implements Screen {
         /*batch.draw(new TextureRegion(redTankTexture), (float)x, (float)y,
                 (float) tank.getCenterX()-(float)x, (float) tank.getCenterY()-(float)y,
                 (float) tank.getWidth(), (float) tank.getHeight(), 1f, 1f, (float) tank.getDirection().getValue()*90);*/
-        while(uninitialized){
+        while(uninitialized) {
             try {
                 Thread.sleep(25);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if(!this.magazine.checkMap()){
+            if (!this.magazine.checkMap()) {
                 this.board = new Board(magazine.getMap(), magazine.getLivesOnStart());
                 uninitialized = false;
                 break;
             }
         }
+        ois = magazine.ois;
+        oos = magazine.oos;
         drawBoard();
         drawMissiles();
+        update();
         batch.end();
         this.date = new Date(); // aktualizuje czas
     }
@@ -333,28 +340,36 @@ public class GameScreen implements Screen {
         }
     }*/
 
-    /*private void update(){
+    private void update(){
         this.timeStart = date.getTime();
+        Tank tank = board.getTanks().get(magazine.getActivePlayerId());
         int x = (int) tank.getX();
         int y = (int) tank.getY();
+        try{
             //Odczyt klawiszy
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-                tank.x -= Constants.TANK_SPEED;
-                tank.setDirection(LEFT);
+                oos.writeObject(magazine.getActivePlayerId()+ ",1");
+                //tank.x -= Constants.TANK_SPEED;
             } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-                tank.x += Constants.TANK_SPEED;
-                tank.setDirection(Direction.RIGHT);
+                //tank.x += Constants.TANK_SPEED;
+                oos.writeObject(magazine.getActivePlayerId()+ ",2");
             } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-                tank.y += Constants.TANK_SPEED;
-                tank.setDirection(Direction.UP);
+                //tank.y += Constants.TANK_SPEED;
+                oos.writeObject(magazine.getActivePlayerId()+ ",3");
             } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-                tank.y -= Constants.TANK_SPEED;
-                tank.setDirection(Direction.DOWN);
+                //tank.y -= Constants.TANK_SPEED;
+                oos.writeObject(magazine.getActivePlayerId()+ ",4");
             } else if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                this.launchMissile();
+                oos.writeObject(magazine.getActivePlayerId()+ ",5");
+                //this.launchMissile();
             }
-            collisionDetector(x, y);
-    }*/
+            //collisionDetector(x, y);
+        }
+        catch (IOException ex){
+            ex.printStackTrace();
+        }
+
+    }
 
 
     public HashMap<TypeOfObject,Sprite> loadTextures(){
