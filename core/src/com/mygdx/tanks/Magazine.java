@@ -4,6 +4,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import net.tanks.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Queue;
 
 
@@ -15,7 +16,7 @@ robcie tu metody get,set i check i trzyajcie obiekty
  */
 
 public class Magazine implements Runnable{
-    private Queue<Packet> packetsQueue;
+    private Queue<ArrayList<ArrayList<? extends  Packet>>> packetsQueue;
     ObjectInputStream ois;
     ObjectOutputStream oos;
     private Board board;
@@ -25,10 +26,15 @@ public class Magazine implements Runnable{
 
     public Magazine()
     {
-
+        packetsQueue = new LinkedList<ArrayList<ArrayList<? extends Packet>>>();
     }
 
-    public void addPosition(ArrayList<PositionPacket> positionPackets){
+    public void addPacketToQueue(ArrayList<ArrayList<? extends  Packet>> position)
+    {
+        packetsQueue.add(position);
+    }
+
+    /*public void addPosition(ArrayList<PositionPacket> positionPackets){
         for (PositionPacket packet:positionPackets) {
             packetsQueue.add(new PositionPacket(packet.getId(), packet.getPositionX(), packet.getPositionY()));
         }
@@ -50,7 +56,7 @@ public class Magazine implements Runnable{
         for (PlayerStatisticsPacket packet: statisticsPackets) {
             packetsQueue.add(new PlayerStatisticsPacket(packet.getPlayerId(), packet.getPoints(), packet.getRemainingLives()));
         }
-    }
+    }*/
 
     public Board getBoard() {
         return board;

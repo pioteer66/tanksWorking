@@ -66,18 +66,18 @@ public class SocketWorker implements Runnable {
 
 
             while (true) {
-                ArrayList<ArrayList<Packet>> list = new ArrayList<ArrayList<Packet>>();
                 ArrayList<ArrayList<? extends Packet>> returnedPacket =
                         (ArrayList<ArrayList<? extends Packet>>) ois.readObject();
 
-                ArrayList<PositionPacket> positionPackets = (ArrayList<PositionPacket>) returnedPacket.get(0);
-                ArrayList<MissilePacket> missilePackets = (ArrayList<MissilePacket>) returnedPacket.get(1);
-                ArrayList<HitsPacket> hitsPackets = (ArrayList<HitsPacket>) returnedPacket.get(2);
-                ArrayList<PlayerStatisticsPacket> statisticsPackets = (ArrayList<PlayerStatisticsPacket>) returnedPacket.get(3);
-                this.magazine.addPosition(positionPackets);
-                this.magazine.addMissile(missilePackets);
-                this.magazine.addHits(hitsPackets);
-                this.magazine.addStatistic(statisticsPackets);
+                //ArrayList<PositionPacket> positionPackets = (ArrayList<PositionPacket>) returnedPacket.get(0);
+                //ArrayList<MissilePacket> missilePackets = (ArrayList<MissilePacket>) returnedPacket.get(1);
+                //ArrayList<HitsPacket> hitsPackets = (ArrayList<HitsPacket>) returnedPacket.get(2);
+                //ArrayList<PlayerStatisticsPacket> statisticsPackets = (ArrayList<PlayerStatisticsPacket>) returnedPacket.get(3);
+                this.magazine.addPacketToQueue(returnedPacket);
+                //this.magazine.addPosition(positionPackets);
+                //this.magazine.addMissile(missilePackets);
+                //this.magazine.addHits(hitsPackets);
+                //this.magazine.addStatistic(statisticsPackets);
                 }
 
         } catch (ClassNotFoundException ex) {
